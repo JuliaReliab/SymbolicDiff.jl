@@ -1,4 +1,4 @@
-using SymbolicExpr
+using SymbolicDiff
 using Test
 
 @testset "SymbolicValue" begin

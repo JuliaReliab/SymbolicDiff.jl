@@ -1,4 +1,4 @@
-module SymbolicExpr
+module SymbolicDiff
 
 include("_symbolic.jl")
 include("_env.jl")

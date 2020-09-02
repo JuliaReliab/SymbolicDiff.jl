@@ -1,5 +1,5 @@
-# SymbolicExpr
+# SymbolicDiff
 
-[![Build Status](https://travis-ci.com/okamumu/SymbolicExpr.jl.svg?branch=master)](https://travis-ci.com/okamumu/SymbolicExpr.jl)
-[![Coverage](https://codecov.io/gh/okamumu/SymbolicExpr.jl/branch/master/graph/badge.svg)](https://codecov.io/gh/okamumu/SymbolicExpr.jl)
-[![Coverage](https://coveralls.io/repos/github/okamumu/SymbolicExpr.jl/badge.svg?branch=master)](https://coveralls.io/github/okamumu/SymbolicExpr.jl?branch=master)
+[![Build Status](https://travis-ci.com/okamumu/SymbolicDiff.jl.svg?branch=master)](https://travis-ci.com/okamumu/SymbolicDiff.jl)
+[![Coverage](https://codecov.io/gh/okamumu/SymbolicDiff.jl/branch/master/graph/badge.svg)](https://codecov.io/gh/okamumu/SymbolicDiff.jl)
+[![Coverage](https://coveralls.io/repos/github/okamumu/SymbolicDiff.jl/badge.svg?branch=master)](https://coveralls.io/github/okamumu/SymbolicDiff.jl?branch=master)

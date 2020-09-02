@@ -1,5 +1,5 @@
 """
-Module: SymbolicExpr (Symbolic Operation for Arithmetic)
+Module: SymbolicDiff (Symbolic Operation for Arithmetic)
 """
 
 export AbstractSymbolic, SymbolicVariable, SymbolicValue, SymbolicExpression
