@@ -17,7 +17,7 @@ function symboliceval(f::SymbolicVariable, dvar::Tuple{Symbol,Symbol}, env::Symb
     Tv(0)
 end
 
-function symboliceval(f::SymbolicExpression, dvar::Tuple{Symbol,Symbol}, env::SymbolicEnv{Tv}, cache::SymbolicCache{Tv}) where Tv
+function symboliceval(f::AbstractSymbolic, dvar::Tuple{Symbol,Symbol}, env::SymbolicEnv{Tv}, cache::SymbolicCache{Tv}) where Tv
     (dvar[1] in f.params) || (dvar[2] in f.params) || return Tv(0)
     get(cache, (f,dvar)) do
         retval = _eval(Val(f.op), f, dvar, env, cache)

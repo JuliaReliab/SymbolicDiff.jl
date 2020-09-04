@@ -17,7 +17,7 @@ function symboliceval(f::SymbolicVariable, dvar::Symbol, env::SymbolicEnv{Tv}, c
     f.var == dvar ? Tv(1) : Tv(0)
 end
 
-function symboliceval(f::SymbolicExpression, dvar::Symbol, env::SymbolicEnv{Tv}, cache::SymbolicCache{Tv}) where Tv
+function symboliceval(f::AbstractSymbolic, dvar::Symbol, env::SymbolicEnv{Tv}, cache::SymbolicCache{Tv}) where Tv
     (dvar in f.params) || return Tv(0)
     get(cache, (f,dvar)) do
         retval = _eval(Val(f.op), f, dvar, env, cache)
