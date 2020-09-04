@@ -35,6 +35,10 @@ SymbolicValue(value::Tv) where Tv = SymbolicValue(Set{Symbol}([]), value)
 iszero
 """
 
+function Base.iszero(x::AbstractSymbolic) where Tv
+    return false
+end
+
 function Base.iszero(x::SymbolicValue{Tv}) where Tv
     return Base.iszero(x.val)
 end
