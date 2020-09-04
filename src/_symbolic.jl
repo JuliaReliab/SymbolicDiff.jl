@@ -32,6 +32,14 @@ end
 SymbolicValue(value::Tv) where Tv = SymbolicValue(Set{Symbol}([]), value)
 
 """
+iszero
+"""
+
+function Base.iszero(x::SymbolicValue{Tv}) where Tv
+    return Base.iszero(x.val)
+end
+
+"""
 SymbolicVariable
 
 A variable to be derivatived

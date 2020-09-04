@@ -10,6 +10,11 @@ using Test
     @test typeof(x) == SymbolicValue{Bool}
 end
 
+@testset "SymbolicValue2" begin
+    x = SymbolicValue(0.0)
+    @test iszero(x)
+end
+
 @testset "SymbolicVariable" begin
     x = SymbolicVariable(:a)
     @test x.var == :a

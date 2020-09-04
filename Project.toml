@@ -1,7 +1,7 @@
 name = "SymbolicDiff"
 uuid = "36d81f91-e041-498f-9150-12818d600b71"
 authors = ["Hiroyuki Okamura"]
-version = "0.1.0"
+version = "0.1.1"
 
 [compat]
 julia = "1"
