@@ -117,24 +117,29 @@ Build a SymbolicExpression
 const operations = [:+, :-, :*, :/, :^]
 
 
-function symbolicexpr(expr::Expr)::Union{AbstractSymbolic,Nothing}
+function symbolicexpr(expr::Expr)
     if Meta.isexpr(expr, :call) && expr.args[1] in operations
         args = [symbolicexpr(x) for x = expr.args[2:end]]
         params = [x.params for x = args]
         SymbolicExpression(union(params...), expr.args[1], args)
+    elseif Meta.isexpr(expr, :vect)
+        [symbolicexpr(x) for x = expr.args]
+    elseif Meta.isexpr(expr, :vcat)
+        elem = [Expr(:row, [symbolicexpr(y) for y = x.args]...) for x = expr.args]
+        eval(Expr(:vcat, elem...))
     else
         nothing
     end
 end
 
-function symbolicexpr(expr::Symbol)::Union{AbstractSymbolic,Nothing}
+function symbolicexpr(expr::Symbol)
     SymbolicVariable(expr)
 end
 
-function symbolicexpr(expr::Nothing)::Union{AbstractSymbolic,Nothing} where Tv
+function symbolicexpr(expr::Nothing)
     nothing
 end
 
-function symbolicexpr(expr::Tv)::Union{AbstractSymbolic,Nothing} where Tv
+function symbolicexpr(expr::Tv) where {Tv <: Number}
     SymbolicValue(expr)
 end

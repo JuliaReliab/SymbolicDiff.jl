@@ -1,4 +1,5 @@
 using SymbolicDiff
+using SparseMatrix
 using Test
 
 @testset "SymbolicValue" begin
@@ -22,7 +23,7 @@ end
 
 @testset "SymbolicExpression1" begin
     env = SymbolicEnv{Float64}()
-    cache = SymbolicCache{Float64}()
+    cache = SymbolicCache()
     x = 5.6
     env[:x] = 5.6
     expr = symbolicexpr(:(x + 1.6))
@@ -32,7 +33,7 @@ end
 
 @testset "SymbolicExpression2" begin
     env = SymbolicEnv{Float64}()
-    cache = SymbolicCache{Float64}()
+    cache = SymbolicCache()
     x = 5.6
     env[:x] = 5.6
     expr = symbolicexpr(:(x - 1.6))
@@ -42,7 +43,7 @@ end
 
 @testset "SymbolicExpression3" begin
     env = SymbolicEnv{Float64}()
-    cache = SymbolicCache{Float64}()
+    cache = SymbolicCache()
     x = 5.6
     env[:x] = 5.6
     expr = symbolicexpr(:(x * 1.6))
@@ -52,7 +53,7 @@ end
 
 @testset "SymbolicExpression4" begin
     env = SymbolicEnv{Float64}()
-    cache = SymbolicCache{Float64}()
+    cache = SymbolicCache()
     x = 5.6
     env[:x] = 5.6
     expr = symbolicexpr(:(x / 1.6))
@@ -62,7 +63,7 @@ end
 
 @testset "SymbolicExpression5" begin
     env = SymbolicEnv{Float64}()
-    cache = SymbolicCache{Float64}()
+    cache = SymbolicCache()
     x = 5.6
     env[:x] = 5.6
     expr = symbolicexpr(:(x ^ 1.6))
@@ -72,7 +73,7 @@ end
 
 @testset "SymbolicExpression6" begin
     env = SymbolicEnv{Float64}()
-    cache = SymbolicCache{Float64}()
+    cache = SymbolicCache()
     x = 5.6
     env[:x] = 5.6
     expr = exp(symbolicexpr(:(-x ^ 1.6)))
@@ -82,7 +83,7 @@ end
 
 @testset "SymbolicExpression7" begin
     env = SymbolicEnv{Float64}()
-    cache = SymbolicCache{Float64}()
+    cache = SymbolicCache()
     x = 5.6
     env[:x] = 5.6
     expr = log(symbolicexpr(:(x ^ 1.6)))
@@ -92,7 +93,7 @@ end
 
 @testset "SymbolicExpression8" begin
     env = SymbolicEnv{Float64}()
-    cache = SymbolicCache{Float64}()
+    cache = SymbolicCache()
     x = 5.6
     env[:x] = 5.6
     expr = log(symbolicexpr(:(x ^ 1.6)))
@@ -102,7 +103,7 @@ end
 
 @testset "SymbolicExpression9" begin
     env = SymbolicEnv{Float64}()
-    cache = SymbolicCache{Float64}()
+    cache = SymbolicCache()
     x = 5.6
     env[:x] = 5.6
     expr = sqrt(symbolicexpr(:(x^ 1.6)))
@@ -112,7 +113,7 @@ end
 
 @testset "SymbolicExpressionDeriv1" begin
     env = SymbolicEnv{Float64}()
-    cache = SymbolicCache{Float64}()
+    cache = SymbolicCache()
     x = 5.6
     env[:x] = 5.6
     expr = symbolicexpr(:(4 * x + 1.6))
@@ -122,7 +123,7 @@ end
 
 @testset "SymbolicExpressionDeriv2" begin
     env = SymbolicEnv{Float64}()
-    cache = SymbolicCache{Float64}()
+    cache = SymbolicCache()
     x = 5.6
     env[:x] = 5.6
     expr = symbolicexpr(:(-4 * x - 1.6 * x))
@@ -132,7 +133,7 @@ end
 
 @testset "SymbolicExpressionDeriv3" begin
     env = SymbolicEnv{Float64}()
-    cache = SymbolicCache{Float64}()
+    cache = SymbolicCache()
     x = 5.6
     env[:x] = 5.6
     expr = symbolicexpr(:(-4 * x * x))
@@ -142,7 +143,7 @@ end
 
 @testset "SymbolicExpressionDeriv4" begin
     env = SymbolicEnv{Float64}()
-    cache = SymbolicCache{Float64}()
+    cache = SymbolicCache()
     x = 5.6
     y = 10.1
     env[:x] = x
@@ -154,7 +155,7 @@ end
 
 @testset "SymbolicExpressionDeriv5" begin
     env = SymbolicEnv{Float64}()
-    cache = SymbolicCache{Float64}()
+    cache = SymbolicCache()
     x = 5.6
     y = 10.1
     env[:x] = x
@@ -166,7 +167,7 @@ end
 
 @testset "SymbolicExpressionDeriv6" begin
     env = SymbolicEnv{Float64}()
-    cache = SymbolicCache{Float64}()
+    cache = SymbolicCache()
     x = 5.6
     y = 10.1
     env[:x] = x
@@ -178,7 +179,7 @@ end
 
 @testset "SymbolicExpressionDeriv7" begin
     env = SymbolicEnv{Float64}()
-    cache = SymbolicCache{Float64}()
+    cache = SymbolicCache()
     x = 5.6
     env[:x] = x
     expr = symbolicexpr(:(-4 * x ^ 3))
@@ -188,7 +189,7 @@ end
 
 @testset "SymbolicExpressionDeriv8" begin
     env = SymbolicEnv{Float64}()
-    cache = SymbolicCache{Float64}()
+    cache = SymbolicCache()
     x = 5.6
     y = 10.1
     env[:x] = x
@@ -203,7 +204,7 @@ end
 
 @testset "SymbolicExpressionDeriv2_1" begin
     env = SymbolicEnv{Float64}()
-    cache = SymbolicCache{Float64}()
+    cache = SymbolicCache()
     x = 5.6
     y = 10.1
     env[:x] = x
@@ -215,7 +216,7 @@ end
 
 @testset "Macro1" begin
     env = SymbolicEnv{Float64}()
-    cache = SymbolicCache{Float64}()
+    cache = SymbolicCache()
     x = 5.6
     y = 10.1
     @env env begin
@@ -229,7 +230,7 @@ end
 
 @testset "ops1" begin
     env = SymbolicEnv{Float64}()
-    cache = SymbolicCache{Float64}()
+    cache = SymbolicCache()
     x = 0.56
     y = 0.101
     @env env begin
@@ -243,7 +244,120 @@ end
 
 @testset "vector1" begin
     env = SymbolicEnv{Float64}()
-    cache = SymbolicCache{Float64}()
+    cache = SymbolicCache()
     x = AbstractSymbolic[@expr(x), 1, 1.0]
     println(x)
+end
+
+@testset "SymbolicVector1" begin
+    v = [@expr x + $(i) for i = 1:10]
+    x = 10
+    @env test begin
+        x = x
+    end
+    @test symboliceval(v, test, SymbolicCache()) == [x+i for i = 1:10]
+end
+
+@testset "SymbolicVector1" begin
+    v = [@expr x^$i + $(i) for i = 1:10]
+    x = 10
+    @env test begin
+        x = x
+    end
+    @test symboliceval(v, :x, test, SymbolicCache()) == [i * x^(i-1) for i = 1:10]
+end
+
+@testset "SymbolicCSR1" begin
+    v = [@expr x^$i + $(i) for i = 1:9]
+    m = SparseCSR(3, 3, v, [1, 4, 7, 10], [1, 2, 3, 1, 2, 3, 1, 2, 3])
+    x = 10
+    @env test begin
+        x = x
+    end
+    @test symboliceval(m, test, SymbolicCache()) == SparseCSR(3, 3, [x^i + i for i = 1:10], [1, 4, 7, 10], [1, 2, 3, 1, 2, 3, 1, 2, 3])
+end
+
+@testset "SymbolicCSR2" begin
+    v = [@expr x^$i + $(i) for i = 1:9]
+    m = SparseCSR(3, 3, v, [1, 4, 7, 10], [1, 2, 3, 1, 2, 3, 1, 2, 3])
+    x = 10
+    @env test begin
+        x = x
+    end
+    @test symboliceval(m, :x, test, SymbolicCache()) == SparseCSR(3, 3, [i * x^(i-1) for i = 1:10], [1, 4, 7, 10], [1, 2, 3, 1, 2, 3, 1, 2, 3])
+end
+
+@testset "SymbolicCSC1" begin
+    v = [@expr x^$i + $(i) for i = 1:9]
+    m = SparseCSC(3, 3, v, [1, 4, 7, 10], [1, 2, 3, 1, 2, 3, 1, 2, 3])
+    x = 10
+    @env test begin
+        x = x
+    end
+    @test symboliceval(m, test, SymbolicCache()) == SparseCSC(3, 3, [x^i + i for i = 1:10], [1, 4, 7, 10], [1, 2, 3, 1, 2, 3, 1, 2, 3])
+end
+
+@testset "SymbolicCSC2" begin
+    v = [@expr x^$i + $(i) for i = 1:9]
+    m = SparseCSC(3, 3, v, [1, 4, 7, 10], [1, 2, 3, 1, 2, 3, 1, 2, 3])
+    x = 10
+    @env test begin
+        x = x
+    end
+    @test symboliceval(m, :x, test, SymbolicCache()) == SparseCSC(3, 3, [i * x^(i-1) for i = 1:10], [1, 4, 7, 10], [1, 2, 3, 1, 2, 3, 1, 2, 3])
+end
+
+@testset "SymbolicCOO1" begin
+    v = [@expr x^$i + $(i) for i = 1:9]
+    m = SparseCOO(3, 3, v, [1, 1, 1, 2, 2, 2, 3, 3, 3], [1, 2, 3, 1, 2, 3, 1, 2, 3])
+    x = 10
+    @env test begin
+        x = x
+    end
+    @test symboliceval(m, test, SymbolicCache()) == SparseCOO(3, 3, [x^i + i for i = 1:10], [1, 1, 1, 2, 2, 2, 3, 3, 3], [1, 2, 3, 1, 2, 3, 1, 2, 3])
+end
+
+@testset "SymbolicCOO2" begin
+    v = [@expr x^$i + $(i) for i = 1:9]
+    m = SparseCOO(3, 3, v, [1, 1, 1, 2, 2, 2, 3, 3, 3], [1, 2, 3, 1, 2, 3, 1, 2, 3])
+    x = 10
+    @env test begin
+        x = x
+    end
+    @test symboliceval(m, :x, test, SymbolicCache()) == SparseCOO(3, 3, [i * x^(i-1) for i = 1:10], [1, 1, 1, 2, 2, 2, 3, 3, 3], [1, 2, 3, 1, 2, 3, 1, 2, 3])
+end
+
+@testset "SymbolicMat1" begin
+    m = [@expr x^$i + $(i) for i = 1:3, j = 1:3]
+    x = 10
+    @env test begin
+        x = x
+    end
+    @test symboliceval(m, test, SymbolicCache()) == [x^i + i for i = 1:3, j = 1:3]
+end
+
+@testset "SymbolicMat2" begin
+    m = [@expr x^$i + $(i) for i = 1:3, j = 1:3]
+    x = 10
+    @env test begin
+        x = x
+    end
+    @test symboliceval(m, :x, test, SymbolicCache()) == [i*x^(i-1) for i = 1:3, j = 1:3]
+end
+
+@testset "SymbolicVec3" begin
+    m = @expr [1, x, 3]
+    @test m[1].val == 1
+    @test m[2].var == :x
+    @test m[3].val == 3
+end
+
+@testset "SymbolicMat3" begin
+    m = @expr [1 x 3; 3 4 y]
+    @test m[1,1].val == 1
+    @test m[1,2].var == :x
+    @test m[1,3].val == 3
+    @test m[2,1].val == 3
+    @test m[2,2].val == 4
+    @test m[2,3].var == :y
 end
