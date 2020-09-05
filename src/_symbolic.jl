@@ -3,7 +3,7 @@ Module: SymbolicDiff (Symbolic Operation for Arithmetic)
 """
 
 export AbstractSymbolic, SymbolicVariable, SymbolicValue, SymbolicExpression
-export symbolicexpr
+export symbolic
 
 import Base
 
@@ -117,31 +117,31 @@ Build a SymbolicExpression
 const operations = [:+, :-, :*, :/, :^]
 
 
-function symbolicexpr(expr::Expr)
+function symbolic(expr::Expr)
     if Meta.isexpr(expr, :call) && expr.args[1] in operations
-        args = [symbolicexpr(x) for x = expr.args[2:end]]
+        args = [symbolic(x) for x = expr.args[2:end]]
         params = [x.params for x = args]
         SymbolicExpression(union(params...), expr.args[1], args)
     elseif Meta.isexpr(expr, :vect)
-        vec = [symbolicexpr(x) for x = expr.args]
-        symbolicvector(vec)
+        vec = [symbolic(x) for x = expr.args]
+        symbolic(vec)
     elseif Meta.isexpr(expr, :vcat)
-        elem = [Expr(:row, [symbolicexpr(y) for y = x.args]...) for x = expr.args]
+        elem = [Expr(:row, [symbolic(y) for y = x.args]...) for x = expr.args]
         mat = eval(Expr(:vcat, elem...))
-        symbolicmatrix(mat)
+        symbolic(mat)
     else
         nothing
     end
 end
 
-function symbolicexpr(expr::Symbol)
+function symbolic(expr::Symbol)
     SymbolicVariable(expr)
 end
 
-function symbolicexpr(expr::Nothing)
+function symbolic(expr::Nothing)
     nothing
 end
 
-function symbolicexpr(expr::Tv) where {Tv <: Number}
+function symbolic(expr::Tv) where {Tv <: Number}
     SymbolicValue(expr)
 end

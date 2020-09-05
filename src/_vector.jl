@@ -2,7 +2,7 @@
 SymbolicVector
 """
 
-export symbolicvector, AbstractSymbolicVectorMatrix, AbstractSymbolicVector
+export symbolic, AbstractSymbolicVectorMatrix, AbstractSymbolicVector
 
 import Base
 
@@ -14,7 +14,7 @@ struct SymbolicVector <: AbstractSymbolicVector
     elem::Vector{<:AbstractSymbolic}
 end
 
-function symbolicvector(vec::Vector{<:AbstractSymbolic})
+function symbolic(vec::Vector{<:AbstractSymbolic})
     params = union([x.params for x = vec]...)
     SymbolicVector(params, vec)
 end

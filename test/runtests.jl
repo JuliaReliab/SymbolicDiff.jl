@@ -27,7 +27,7 @@ end
     cache = SymbolicCache()
     x = 5.6
     env[:x] = 5.6
-    expr = symbolicexpr(:(x + 1.6))
+    expr = symbolic(:(x + 1.6))
     y = symboliceval(expr, env, cache)
     @test y == x + 1.6
 end
@@ -37,7 +37,7 @@ end
     cache = SymbolicCache()
     x = 5.6
     env[:x] = 5.6
-    expr = symbolicexpr(:(x - 1.6))
+    expr = symbolic(:(x - 1.6))
     y = symboliceval(expr, env, cache)
     @test y == x - 1.6
 end
@@ -47,7 +47,7 @@ end
     cache = SymbolicCache()
     x = 5.6
     env[:x] = 5.6
-    expr = symbolicexpr(:(x * 1.6))
+    expr = symbolic(:(x * 1.6))
     y = symboliceval(expr, env, cache)
     @test y == x * 1.6
 end
@@ -57,7 +57,7 @@ end
     cache = SymbolicCache()
     x = 5.6
     env[:x] = 5.6
-    expr = symbolicexpr(:(x / 1.6))
+    expr = symbolic(:(x / 1.6))
     y = symboliceval(expr, env, cache)
     @test y == x / 1.6
 end
@@ -67,7 +67,7 @@ end
     cache = SymbolicCache()
     x = 5.6
     env[:x] = 5.6
-    expr = symbolicexpr(:(x ^ 1.6))
+    expr = symbolic(:(x ^ 1.6))
     y = symboliceval(expr, env, cache)
     @test y == x ^ 1.6
 end
@@ -77,7 +77,7 @@ end
     cache = SymbolicCache()
     x = 5.6
     env[:x] = 5.6
-    expr = exp(symbolicexpr(:(-x ^ 1.6)))
+    expr = exp(symbolic(:(-x ^ 1.6)))
     y = symboliceval(expr, env, cache)
     @test y == exp(-x ^ 1.6)
 end
@@ -87,7 +87,7 @@ end
     cache = SymbolicCache()
     x = 5.6
     env[:x] = 5.6
-    expr = log(symbolicexpr(:(x ^ 1.6)))
+    expr = log(symbolic(:(x ^ 1.6)))
     y = symboliceval(expr, env, cache)
     @test y == log(x ^ 1.6)
 end
@@ -97,7 +97,7 @@ end
     cache = SymbolicCache()
     x = 5.6
     env[:x] = 5.6
-    expr = log(symbolicexpr(:(x ^ 1.6)))
+    expr = log(symbolic(:(x ^ 1.6)))
     y = symboliceval(expr, env, cache)
     @test y == log(x ^ 1.6)
 end
@@ -107,7 +107,7 @@ end
     cache = SymbolicCache()
     x = 5.6
     env[:x] = 5.6
-    expr = sqrt(symbolicexpr(:(x^ 1.6)))
+    expr = sqrt(symbolic(:(x^ 1.6)))
     y = symboliceval(expr, env, cache)
     @test y == sqrt(x ^ 1.6)
 end
@@ -117,7 +117,7 @@ end
     cache = SymbolicCache()
     x = 5.6
     env[:x] = 5.6
-    expr = symbolicexpr(:(4 * x + 1.6))
+    expr = symbolic(:(4 * x + 1.6))
     y = symboliceval(expr, :x, env, cache)
     @test y == 4.0
 end
@@ -127,7 +127,7 @@ end
     cache = SymbolicCache()
     x = 5.6
     env[:x] = 5.6
-    expr = symbolicexpr(:(-4 * x - 1.6 * x))
+    expr = symbolic(:(-4 * x - 1.6 * x))
     y = symboliceval(expr, :x, env, cache)
     @test y == -4-1.6
 end
@@ -137,7 +137,7 @@ end
     cache = SymbolicCache()
     x = 5.6
     env[:x] = 5.6
-    expr = symbolicexpr(:(-4 * x * x))
+    expr = symbolic(:(-4 * x * x))
     y = symboliceval(expr, :x, env, cache)
     @test y == -8 * x
 end
@@ -149,7 +149,7 @@ end
     y = 10.1
     env[:x] = x
     env[:y] = y
-    expr = symbolicexpr(:(-4 * x / y))
+    expr = symbolic(:(-4 * x / y))
     res = symboliceval(expr, :x, env, cache)
     @test res == -4 / y
 end
@@ -161,7 +161,7 @@ end
     y = 10.1
     env[:x] = x
     env[:y] = y
-    expr = symbolicexpr(:(-4 * x / y))
+    expr = symbolic(:(-4 * x / y))
     res = symboliceval(expr, :y, env, cache)
     @test res == 4 * x / y^2
 end
@@ -173,7 +173,7 @@ end
     y = 10.1
     env[:x] = x
     env[:y] = y
-    expr = symbolicexpr(:(-4 * x * y))
+    expr = symbolic(:(-4 * x * y))
     res = symboliceval(expr, :x, env, cache)
     @test res == -4 * y
 end
@@ -183,7 +183,7 @@ end
     cache = SymbolicCache()
     x = 5.6
     env[:x] = x
-    expr = symbolicexpr(:(-4 * x ^ 3))
+    expr = symbolic(:(-4 * x ^ 3))
     res = symboliceval(expr, :x, env, cache)
     @test res == -12 * x^2
 end
@@ -195,7 +195,7 @@ end
     y = 10.1
     env[:x] = x
     env[:y] = y
-    expr = -log(symbolicexpr(:(x*y))) * symbolicexpr(:y)
+    expr = -log(symbolic(:(x*y))) * symbolic(:y)
     res = symboliceval(expr, :x, env, cache)
     @test res == - y / (x * y) * y
     res = symboliceval(expr, :y, env, cache)
@@ -210,7 +210,7 @@ end
     y = 10.1
     env[:x] = x
     env[:y] = y
-    expr = symbolicexpr(:(x^2 + 10*x*y + 4*y^2))
+    expr = symbolic(:(x^2 + 10*x*y + 4*y^2))
     res = symboliceval(expr, (:x,:y), env, cache)
     @test res == 10.0
 end
@@ -251,7 +251,7 @@ end
 end
 
 @testset "SymbolicVector1" begin
-    v = symbolicvector([@expr x + $(i) for i = 1:10])
+    v = symbolic([@expr x + $(i) for i = 1:10])
     x = 10
     @env test begin
         x = x
@@ -260,7 +260,7 @@ end
 end
 
 @testset "SymbolicVector1" begin
-    v = symbolicvector([@expr x^$i + $(i) for i = 1:10])
+    v = symbolic([@expr x^$i + $(i) for i = 1:10])
     x = 10
     @env test begin
         x = x
@@ -270,7 +270,7 @@ end
 
 @testset "SymbolicCSR1" begin
     v = [@expr x^$i + $(i) for i = 1:9]
-    m = symbolicmatrix(SparseCSR(3, 3, v, [1, 4, 7, 10], [1, 2, 3, 1, 2, 3, 1, 2, 3]))
+    m = symbolic(SparseCSR(3, 3, v, [1, 4, 7, 10], [1, 2, 3, 1, 2, 3, 1, 2, 3]))
     x = 10
     @env test begin
         x = x
@@ -280,7 +280,7 @@ end
 
 @testset "SymbolicCSR2" begin
     v = [@expr x^$i + $(i) for i = 1:9]
-    m = symbolicmatrix(SparseCSR(3, 3, v, [1, 4, 7, 10], [1, 2, 3, 1, 2, 3, 1, 2, 3]))
+    m = symbolic(SparseCSR(3, 3, v, [1, 4, 7, 10], [1, 2, 3, 1, 2, 3, 1, 2, 3]))
     x = 10
     @env test begin
         x = x
@@ -290,7 +290,7 @@ end
 
 @testset "SymbolicCSC1" begin
     v = [@expr x^$i + $(i) for i = 1:9]
-    m = symbolicmatrix(SparseCSC(3, 3, v, [1, 4, 7, 10], [1, 2, 3, 1, 2, 3, 1, 2, 3]))
+    m = symbolic(SparseCSC(3, 3, v, [1, 4, 7, 10], [1, 2, 3, 1, 2, 3, 1, 2, 3]))
     x = 10
     @env test begin
         x = x
@@ -300,7 +300,7 @@ end
 
 @testset "SymbolicCSC2" begin
     v = [@expr x^$i + $(i) for i = 1:9]
-    m = symbolicmatrix(SparseCSC(3, 3, v, [1, 4, 7, 10], [1, 2, 3, 1, 2, 3, 1, 2, 3]))
+    m = symbolic(SparseCSC(3, 3, v, [1, 4, 7, 10], [1, 2, 3, 1, 2, 3, 1, 2, 3]))
     x = 10
     @env test begin
         x = x
@@ -310,7 +310,7 @@ end
 
 @testset "SymbolicCOO1" begin
     v = [@expr x^$i + $(i) for i = 1:9]
-    m = symbolicmatrix(SparseCOO(3, 3, v, [1, 1, 1, 2, 2, 2, 3, 3, 3], [1, 2, 3, 1, 2, 3, 1, 2, 3]))
+    m = symbolic(SparseCOO(3, 3, v, [1, 1, 1, 2, 2, 2, 3, 3, 3], [1, 2, 3, 1, 2, 3, 1, 2, 3]))
     x = 10
     @env test begin
         x = x
@@ -320,7 +320,7 @@ end
 
 @testset "SymbolicCOO2" begin
     v = [@expr x^$i + $(i) for i = 1:9]
-    m = symbolicmatrix(SparseCOO(3, 3, v, [1, 1, 1, 2, 2, 2, 3, 3, 3], [1, 2, 3, 1, 2, 3, 1, 2, 3]))
+    m = symbolic(SparseCOO(3, 3, v, [1, 1, 1, 2, 2, 2, 3, 3, 3], [1, 2, 3, 1, 2, 3, 1, 2, 3]))
     x = 10
     @env test begin
         x = x
@@ -329,7 +329,7 @@ end
 end
 
 @testset "SymbolicMat1" begin
-    m = symbolicmatrix([@expr x^$i + $(i) for i = 1:3, j = 1:3])
+    m = symbolic([@expr x^$i + $(i) for i = 1:3, j = 1:3])
     x = 10
     @env test begin
         x = x
@@ -338,7 +338,7 @@ end
 end
 
 @testset "SymbolicMat2" begin
-    m = symbolicmatrix([@expr x^$i + $(i) for i = 1:3, j = 1:3])
+    m = symbolic([@expr x^$i + $(i) for i = 1:3, j = 1:3])
     x = 10
     @env test begin
         x = x

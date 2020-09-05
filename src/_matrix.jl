@@ -3,7 +3,7 @@
 SymbolicMatrix
 """
 
-export symbolicmatrix, AbstractSymbolicMatrix
+export symbolic, AbstractSymbolicMatrix
 
 import SparseMatrix: SparseCSR, SparseCSC, SparseCOO
 
@@ -33,22 +33,22 @@ end
 symbolicmatrix
 """
 
-function symbolicmatrix(mat::Matrix{<:AbstractSymbolic})
+function symbolic(mat::Matrix{<:AbstractSymbolic})
     params = union([x.params for x = mat]...)
     SymbolicMatrix(params, mat)
 end
 
-function symbolicmatrix(mat::SparseCSR{<:AbstractSymbolic,Ti}) where Ti
+function symbolic(mat::SparseCSR{<:AbstractSymbolic,Ti}) where Ti
     params = union([x.params for x = mat.val]...)
     SymbolicCSRMatrix(params, mat)
 end
 
-function symbolicmatrix(mat::SparseCSC{<:AbstractSymbolic,Ti}) where Ti
+function symbolic(mat::SparseCSC{<:AbstractSymbolic,Ti}) where Ti
     params = union([x.params for x = mat.val]...)
     SymbolicCSCMatrix(params, mat)
 end
 
-function symbolicmatrix(mat::SparseCOO{<:AbstractSymbolic,Ti}) where Ti
+function symbolic(mat::SparseCOO{<:AbstractSymbolic,Ti}) where Ti
     params = union([x.params for x = mat.val]...)
     SymbolicCOOMatrix(params, mat)
 end

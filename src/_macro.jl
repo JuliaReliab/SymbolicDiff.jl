@@ -54,6 +54,6 @@ f = @expr x^2 + y
 """
 
 macro expr(x)
-    Expr(:call, :symbolicexpr, Expr(:quote, x))
+    Expr(:call, :symbolic, Expr(:quote, x))
 end
 
