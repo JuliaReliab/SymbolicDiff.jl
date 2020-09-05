@@ -3,26 +3,28 @@
 SymbolicMatrix
 """
 
-export symbolicmatrix
+export symbolicmatrix, AbstractSymbolicMatrix
 
 import SparseMatrix: SparseCSR, SparseCSC, SparseCOO
 
-struct SymbolicMatrix <: AbstractSymbolicVectorMatrix
+abstract type AbstractSymbolicMatrix <: AbstractSymbolicVectorMatrix end
+
+struct SymbolicMatrix <: AbstractSymbolicMatrix
     params::Set{Symbol}
     elem::Matrix{<:AbstractSymbolic}
 end
 
-struct SymbolicCSRMatrix{Ti} <: AbstractSymbolicVectorMatrix
+struct SymbolicCSRMatrix{Ti} <: AbstractSymbolicMatrix
     params::Set{Symbol}
     elem::SparseCSR{<:AbstractSymbolic,Ti}
 end
 
-struct SymbolicCSCMatrix{Ti} <: AbstractSymbolicVectorMatrix
+struct SymbolicCSCMatrix{Ti} <: AbstractSymbolicMatrix
     params::Set{Symbol}
     elem::SparseCSC{<:AbstractSymbolic,Ti}
 end
 
-struct SymbolicCOOMatrix{Ti} <: AbstractSymbolicVectorMatrix
+struct SymbolicCOOMatrix{Ti} <: AbstractSymbolicMatrix
     params::Set{Symbol}
     elem::SparseCOO{<:AbstractSymbolic,Ti}
 end

@@ -2,13 +2,14 @@
 SymbolicVector
 """
 
-export symbolicvector
+export symbolicvector, AbstractSymbolicVectorMatrix, AbstractSymbolicVector
 
 import Base
 
 abstract type AbstractSymbolicVectorMatrix <: AbstractSymbolic end
+abstract type AbstractSymbolicVector <: AbstractSymbolicVectorMatrix end
 
-struct SymbolicVector <: AbstractSymbolicVectorMatrix
+struct SymbolicVector <: AbstractSymbolicVector
     params::Set{Symbol}
     elem::Vector{<:AbstractSymbolic}
 end
