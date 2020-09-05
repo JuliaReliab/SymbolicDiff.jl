@@ -32,6 +32,14 @@ end
 SymbolicValue(value::Tv) where Tv = SymbolicValue(Set{Symbol}([]), value)
 
 """
+convert
+"""
+
+function Base.convert(::Type{<:AbstractSymbolic}, x::Number)
+    SymbolicValue(x)
+end
+
+"""
 iszero
 """
 

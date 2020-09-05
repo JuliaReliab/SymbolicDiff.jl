@@ -240,3 +240,10 @@ end
     res = symboliceval(expr, (:x,:y), env, cache)
     @test res == exp(x^2 + 10*x*y + 4*y^2) * (10*x + 8*y) * (2*x + 10*y) + exp(x^2 + 10*x*y + 4*y^2) * 10
 end
+
+@testset "vector1" begin
+    env = SymbolicEnv{Float64}()
+    cache = SymbolicCache{Float64}()
+    x = AbstractSymbolic[@expr(x), 1, 1.0]
+    println(x)
+end
