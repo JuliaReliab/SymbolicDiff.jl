@@ -17,7 +17,7 @@ function symboliceval(f::SymbolicVariable, dvar::Tuple{Symbol,Symbol}, env::Symb
     Tv(0)
 end
 
-function symboliceval(f::AbstractSymbolic, dvar::Tuple{Symbol,Symbol}, env::SymbolicEnv{Tv}, cache::SymbolicCache) where Tv
+function symboliceval(f::SymbolicExpression, dvar::Tuple{Symbol,Symbol}, env::SymbolicEnv{Tv}, cache::SymbolicCache) where Tv
     (dvar[1] in f.params) || (dvar[2] in f.params) || return Tv(0)
     get(cache, (f,dvar)) do
         retval = _eval(Val(f.op), f, dvar, env, cache)
@@ -79,7 +79,11 @@ function _eval(::Val{:^}, f::SymbolicExpression, dvar::Tuple{Symbol,Symbol}, env
     dx_a,dy_a = [symboliceval(x, dvar[1], env, cache) for x = f.args]
     dx_b,dy_b = [symboliceval(x, dvar[2], env, cache) for x = f.args]
     dx_ab,dy_ab = [symboliceval(x, dvar, env, cache) for x = f.args]
-    x^(y-2) * ((x*log(x)*dx_b + (y-1)*dy_b) * (x*log(x)*dx_a + y*dy_a) + x * ((1+log(x))*dx_a*dx_b + dy_a*dy_b))
+    f = x^y
+    f_a = f * (dy_a * x * log(x) + y * dx_a) / x
+    f_b = f * (dy_b * x * log(x) + y * dx_b) / x
+    f_ab = (f_b * (dy_a * x * log(x) + y * dx_a) - f_a * dx_b + f * (dy_ab * x * log(x) + dy_a * dx_b * (1 + log(x)) + dx_a * dy_b + y * dx_ab)) / x
+    f_ab
 end
 
 function _eval(::Val{:exp}, f::SymbolicExpression, dvar::Tuple{Symbol,Symbol}, env::SymbolicEnv{Tv}, cache::SymbolicCache) where Tv
@@ -104,4 +108,12 @@ function _eval(::Val{:sqrt}, f::SymbolicExpression, dvar::Tuple{Symbol,Symbol}, 
     dx_b, = [symboliceval(x, dvar[2], env, cache) for x = f.args]
     dx_ab, = [symboliceval(x, dvar, env, cache) for x = f.args]
     sqrt(x) * (dx_ab * 2 - dx_a * dx_b) / (4*x)
+end
+
+function _eval(::Val{:dot}, f::SymbolicExpression, dvar::Tuple{Symbol,Symbol}, env::SymbolicEnv{Tv}, cache::SymbolicCache) where Tv
+    x,y = [symboliceval(x, env, cache) for x = f.args]
+    dx_a,dy_a = [symboliceval(x, dvar[1], env, cache) for x = f.args]
+    dx_b,dy_b = [symboliceval(x, dvar[2], env, cache) for x = f.args]
+    dx_ab,dy_ab = [symboliceval(x, dvar, env, cache) for x = f.args]
+    dot(x,dy_ab) + dot(dx_b,dy_a) + dot(dx_a,dy_b) + dot(dx_ab,y)
 end

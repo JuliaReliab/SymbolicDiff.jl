@@ -3,6 +3,7 @@ operations
 """
 
 import Base
+import LinearAlgebra: dot
 
 function Base.:+(x::AbstractSymbolic)
     SymbolicExpression(x.params, :+, [x])
@@ -51,3 +52,6 @@ function Base.sqrt(x::AbstractSymbolic)
     SymbolicExpression(x.params, :sqrt, [x])
 end
 
+function dot(x::AbstractSymbolic, y::AbstractSymbolic)
+    SymbolicExpression(union(x.params, y.params), :dot, [x, y])
+end

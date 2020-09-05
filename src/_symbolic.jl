@@ -123,10 +123,12 @@ function symbolicexpr(expr::Expr)
         params = [x.params for x = args]
         SymbolicExpression(union(params...), expr.args[1], args)
     elseif Meta.isexpr(expr, :vect)
-        [symbolicexpr(x) for x = expr.args]
+        vec = [symbolicexpr(x) for x = expr.args]
+        symbolicvector(vec)
     elseif Meta.isexpr(expr, :vcat)
         elem = [Expr(:row, [symbolicexpr(y) for y = x.args]...) for x = expr.args]
-        eval(Expr(:vcat, elem...))
+        mat = eval(Expr(:vcat, elem...))
+        symbolicmatrix(mat)
     else
         nothing
     end

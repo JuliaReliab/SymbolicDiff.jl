@@ -4,14 +4,12 @@ Module: SymbolicDiff (Symbolic Operation for Arithmetic)
 
 export symboliceval
 
+using LinearAlgebra: dot
+
 """
 symboliceval(f, env, cache)
 Return the value for expr f
 """
-
-function symboliceval(f::Nothing, env::SymbolicEnv{Tv}, cache::SymbolicCache) where Tv
-    nothing
-end
 
 function symboliceval(f::SymbolicValue{Tx}, env::SymbolicEnv{Tv}, cache::SymbolicCache) where {Tx,Tv}
     Tv(f.val)
@@ -23,7 +21,7 @@ function symboliceval(f::SymbolicVariable, env::SymbolicEnv{Tv}, cache::Symbolic
     end
 end
 
-function symboliceval(f::AbstractSymbolic, env::SymbolicEnv{Tv}, cache::SymbolicCache) where Tv
+function symboliceval(f::SymbolicExpression, env::SymbolicEnv{Tv}, cache::SymbolicCache) where Tv
     get(cache, f) do
         retval = _eval(Val(f.op), f, env, cache)
         cache[f] = retval
@@ -74,4 +72,9 @@ end
 function _eval(::Val{:sqrt}, f::SymbolicExpression, env::SymbolicEnv{Tv}, cache::SymbolicCache) where Tv
     x, = [symboliceval(x, env, cache) for x = f.args]
     sqrt(x)
+end
+
+function _eval(::Val{:dot}, f::SymbolicExpression, env::SymbolicEnv{Tv}, cache::SymbolicCache) where Tv
+    x,y = [symboliceval(x, env, cache) for x = f.args]
+    dot(x,y)
 end

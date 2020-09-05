@@ -17,7 +17,7 @@ function symboliceval(f::SymbolicVariable, dvar::Symbol, env::SymbolicEnv{Tv}, c
     f.var == dvar ? Tv(1) : Tv(0)
 end
 
-function symboliceval(f::AbstractSymbolic, dvar::Symbol, env::SymbolicEnv{Tv}, cache::SymbolicCache) where Tv
+function symboliceval(f::SymbolicExpression, dvar::Symbol, env::SymbolicEnv{Tv}, cache::SymbolicCache) where Tv
     (dvar in f.params) || return Tv(0)
     get(cache, (f,dvar)) do
         retval = _eval(Val(f.op), f, dvar, env, cache)
@@ -83,4 +83,10 @@ function _eval(::Val{:sqrt}, f::SymbolicExpression, dvar::Symbol, env::SymbolicE
     x, = [symboliceval(x, env, cache) for x = f.args]
     dx, = [symboliceval(x, dvar, env, cache) for x = f.args]
     dx /(Tv(2) * sqrt(x))
+end
+
+function _eval(::Val{:dot}, f::SymbolicExpression, dvar::Symbol, env::SymbolicEnv{Tv}, cache::SymbolicCache) where Tv
+    x,y = [symboliceval(x, env, cache) for x = f.args]
+    dx,dy = [symboliceval(x, dvar, env, cache) for x = f.args]
+    dot(x,dy) + dot(dx,y)
 end
