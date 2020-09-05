@@ -73,7 +73,7 @@ function _eval(::Val{:exp}, f::SymbolicExpression, dvar::Symbol, env::SymbolicEn
     exp(x) * dx
 end
 
-function _eval(::Val{:ln}, f::SymbolicExpression, dvar::Symbol, env::SymbolicEnv{Tv}, cache::SymbolicCache{Tv}) where Tv
+function _eval(::Val{:log}, f::SymbolicExpression, dvar::Symbol, env::SymbolicEnv{Tv}, cache::SymbolicCache{Tv}) where Tv
     x, = [symboliceval(x, env, cache) for x = f.args]
     dx, = [symboliceval(x, dvar, env, cache) for x = f.args]
     dx / x

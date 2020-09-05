@@ -106,12 +106,13 @@ symbolicexpr(expr)
 Build a SymbolicExpression
 """
 
+const operations = [:+, :-, :*, :/, :^]
+
+
 function symbolicexpr(expr::Expr)::Union{AbstractSymbolic,Nothing}
     if Meta.isexpr(expr, :call) && expr.args[1] in operations
         args = [symbolicexpr(x) for x = expr.args[2:end]]
         params = [x.params for x = args]
-        (expr.args[1] == :log && length(expr.args) == 2) && return SymbolicExpression(union(params...), :ln, args)
-        (expr.args[1] == :log && length(expr.args) == 3) && return nothing
         SymbolicExpression(union(params...), expr.args[1], args)
     else
         nothing

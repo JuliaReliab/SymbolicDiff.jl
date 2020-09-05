@@ -75,7 +75,7 @@ end
     cache = SymbolicCache{Float64}()
     x = 5.6
     env[:x] = 5.6
-    expr = symbolicexpr(:(exp(-x ^ 1.6)))
+    expr = exp(symbolicexpr(:(-x ^ 1.6)))
     y = symboliceval(expr, env, cache)
     @test y == exp(-x ^ 1.6)
 end
@@ -85,7 +85,7 @@ end
     cache = SymbolicCache{Float64}()
     x = 5.6
     env[:x] = 5.6
-    expr = symbolicexpr(:(log(x ^ 1.6)))
+    expr = log(symbolicexpr(:(x ^ 1.6)))
     y = symboliceval(expr, env, cache)
     @test y == log(x ^ 1.6)
 end
@@ -95,7 +95,7 @@ end
     cache = SymbolicCache{Float64}()
     x = 5.6
     env[:x] = 5.6
-    expr = symbolicexpr(:(log(x ^ 1.6)))
+    expr = log(symbolicexpr(:(x ^ 1.6)))
     y = symboliceval(expr, env, cache)
     @test y == log(x ^ 1.6)
 end
@@ -105,7 +105,7 @@ end
     cache = SymbolicCache{Float64}()
     x = 5.6
     env[:x] = 5.6
-    expr = symbolicexpr(:(sqrt(x ^ 1.6)))
+    expr = sqrt(symbolicexpr(:(x^ 1.6)))
     y = symboliceval(expr, env, cache)
     @test y == sqrt(x ^ 1.6)
 end
@@ -193,7 +193,7 @@ end
     y = 10.1
     env[:x] = x
     env[:y] = y
-    expr = symbolicexpr(:(- log(x * y) * y))
+    expr = -log(symbolicexpr(:(x*y))) * symbolicexpr(:y)
     res = symboliceval(expr, :x, env, cache)
     @test res == - y / (x * y) * y
     res = symboliceval(expr, :y, env, cache)
@@ -227,3 +227,16 @@ end
     @test res == 10.0
 end
 
+@testset "ops1" begin
+    env = SymbolicEnv{Float64}()
+    cache = SymbolicCache{Float64}()
+    x = 0.56
+    y = 0.101
+    @env env begin
+        x = x
+        y = y
+    end
+    expr = exp(@expr x^2 + 10*x*y + 4*y^2)
+    res = symboliceval(expr, (:x,:y), env, cache)
+    @test res == exp(x^2 + 10*x*y + 4*y^2) * (10*x + 8*y) * (2*x + 10*y) + exp(x^2 + 10*x*y + 4*y^2) * 10
+end

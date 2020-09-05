@@ -90,7 +90,7 @@ function _eval(::Val{:exp}, f::SymbolicExpression, dvar::Tuple{Symbol,Symbol}, e
     exp(x) * (dx_b * dx_a + dx_ab)
 end
 
-function _eval(::Val{:ln}, f::SymbolicExpression, dvar::Tuple{Symbol,Symbol}, env::SymbolicEnv{Tv}, cache::SymbolicCache{Tv}) where Tv
+function _eval(::Val{:log}, f::SymbolicExpression, dvar::Tuple{Symbol,Symbol}, env::SymbolicEnv{Tv}, cache::SymbolicCache{Tv}) where Tv
     x, = [symboliceval(x, env, cache) for x = f.args]
     dx_a, = [symboliceval(x, dvar[1], env, cache) for x = f.args]
     dx_b, = [symboliceval(x, dvar[2], env, cache) for x = f.args]

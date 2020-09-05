@@ -36,8 +36,6 @@ _eval(::Val{xx}, f, env, cache)
 Dispached function to evaluate the expr f
 """
 
-const operations = [:+, :-, :*, :/, :^, :exp, :log, :sqrt]
-
 function _eval(::Val{:+}, f::SymbolicExpression, env::SymbolicEnv{Tv}, cache::SymbolicCache{Tv}) where Tv
     args = [symboliceval(x, env, cache) for x = f.args]
     +(args...)
@@ -68,7 +66,7 @@ function _eval(::Val{:exp}, f::SymbolicExpression, env::SymbolicEnv{Tv}, cache::
     exp(x)
 end
 
-function _eval(::Val{:ln}, f::SymbolicExpression, env::SymbolicEnv{Tv}, cache::SymbolicCache{Tv}) where Tv
+function _eval(::Val{:log}, f::SymbolicExpression, env::SymbolicEnv{Tv}, cache::SymbolicCache{Tv}) where Tv
     x, = [symboliceval(x, env, cache) for x = f.args]
     log(x)
 end
