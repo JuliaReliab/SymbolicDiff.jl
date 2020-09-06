@@ -19,7 +19,7 @@ end
 
 macro env(envname, block)
     body = []
-    push!(body, :($(envname) = SymbolicEnv{Float64}()))
+    push!(body, :($(envname) = SymbolicEnv()))
     for x = block.args
         _parameter(x, envname, body)
     end

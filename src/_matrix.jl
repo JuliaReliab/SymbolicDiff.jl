@@ -14,19 +14,19 @@ struct SymbolicMatrix <: AbstractSymbolicMatrix
     elem::Matrix{<:AbstractSymbolic}
 end
 
-struct SymbolicCSRMatrix{Ti} <: AbstractSymbolicMatrix
+struct SymbolicCSRMatrix <: AbstractSymbolicMatrix
     params::Set{Symbol}
-    elem::SparseCSR{<:AbstractSymbolic,Ti}
+    elem::SparseCSR{<:AbstractSymbolic,Int}
 end
 
-struct SymbolicCSCMatrix{Ti} <: AbstractSymbolicMatrix
+struct SymbolicCSCMatrix <: AbstractSymbolicMatrix
     params::Set{Symbol}
-    elem::SparseCSC{<:AbstractSymbolic,Ti}
+    elem::SparseCSC{<:AbstractSymbolic,Int}
 end
 
-struct SymbolicCOOMatrix{Ti} <: AbstractSymbolicMatrix
+struct SymbolicCOOMatrix <: AbstractSymbolicMatrix
     params::Set{Symbol}
-    elem::SparseCOO{<:AbstractSymbolic,Ti}
+    elem::SparseCOO{<:AbstractSymbolic,Int}
 end
 
 """
@@ -38,17 +38,17 @@ function symbolic(mat::Matrix{<:AbstractSymbolic})
     SymbolicMatrix(params, mat)
 end
 
-function symbolic(mat::SparseCSR{<:AbstractSymbolic,Ti}) where Ti
+function symbolic(mat::SparseCSR{<:AbstractSymbolic,Int})
     params = union([x.params for x = mat.val]...)
     SymbolicCSRMatrix(params, mat)
 end
 
-function symbolic(mat::SparseCSC{<:AbstractSymbolic,Ti}) where Ti
+function symbolic(mat::SparseCSC{<:AbstractSymbolic,Int})
     params = union([x.params for x = mat.val]...)
     SymbolicCSCMatrix(params, mat)
 end
 
-function symbolic(mat::SparseCOO{<:AbstractSymbolic,Ti}) where Ti
+function symbolic(mat::SparseCOO{<:AbstractSymbolic,Int})
     params = union([x.params for x = mat.val]...)
     SymbolicCOOMatrix(params, mat)
 end
@@ -78,22 +78,22 @@ symboliceval(f, env, cache)
 Return the value for expr f
 """
 
-function symboliceval(m::SymbolicMatrix, env::SymbolicEnv{Tv}, cache::SymbolicCache) where Tv
+function symboliceval(m::SymbolicMatrix, env::SymbolicEnv, cache::SymbolicCache)
     f = m.elem
     [symboliceval(x, env, cache) for x = f]
 end
 
-function symboliceval(m::SymbolicCSRMatrix{Ti}, env::SymbolicEnv{Tv}, cache::SymbolicCache) where {Ti,Tv}
+function symboliceval(m::SymbolicCSRMatrix, env::SymbolicEnv, cache::SymbolicCache)
     f = m.elem
     SparseCSR(f.m, f.n, [symboliceval(x, env, cache) for x = f.val], f.rowptr, f.colind)
 end
 
-function symboliceval(m::SymbolicCSCMatrix{Ti}, env::SymbolicEnv{Tv}, cache::SymbolicCache) where {Ti,Tv}
+function symboliceval(m::SymbolicCSCMatrix, env::SymbolicEnv, cache::SymbolicCache)
     f = m.elem
     SparseCSC(f.m, f.n, [symboliceval(x, env, cache) for x = f.val], f.colptr, f.rowind)
 end
 
-function symboliceval(m::SymbolicCOOMatrix{Ti}, env::SymbolicEnv{Tv}, cache::SymbolicCache) where {Ti,Tv}
+function symboliceval(m::SymbolicCOOMatrix, env::SymbolicEnv, cache::SymbolicCache)
     f = m.elem
     SparseCOO(f.m, f.n, [symboliceval(x, env, cache) for x = f.val], f.rowind, f.colind)
 end
@@ -103,22 +103,22 @@ symboliceval(f, dvar, env, cache)
 Return the first derivative of expr f with respect to dvar
 """
 
-function symboliceval(m::SymbolicMatrix, dvar::Symbol, env::SymbolicEnv{Tv}, cache::SymbolicCache) where Tv
+function symboliceval(m::SymbolicMatrix, dvar::Symbol, env::SymbolicEnv, cache::SymbolicCache)
     f = m.elem
     [symboliceval(x, dvar, env, cache) for x = f]
 end
 
-function symboliceval(m::SymbolicCSRMatrix{Ti}, dvar::Symbol, env::SymbolicEnv{Tv}, cache::SymbolicCache) where {Ti,Tv}
+function symboliceval(m::SymbolicCSRMatrix, dvar::Symbol, env::SymbolicEnv, cache::SymbolicCache)
     f = m.elem
     SparseCSR(f.m, f.n, [symboliceval(x, dvar, env, cache) for x = f.val], f.rowptr, f.colind)
 end
 
-function symboliceval(m::SymbolicCSCMatrix{Ti}, dvar::Symbol, env::SymbolicEnv{Tv}, cache::SymbolicCache) where {Ti,Tv}
+function symboliceval(m::SymbolicCSCMatrix, dvar::Symbol, env::SymbolicEnv, cache::SymbolicCache)
     f = m.elem
     SparseCSC(f.m, f.n, [symboliceval(x, dvar, env, cache) for x = f.val], f.colptr, f.rowind)
 end
 
-function symboliceval(m::SymbolicCOOMatrix{Ti}, dvar::Symbol, env::SymbolicEnv{Tv}, cache::SymbolicCache) where {Ti,Tv}
+function symboliceval(m::SymbolicCOOMatrix, dvar::Symbol, env::SymbolicEnv, cache::SymbolicCache)
     f = m.elem
     SparseCOO(f.m, f.n, [symboliceval(x, dvar, env, cache) for x = f.val], f.rowind, f.colind)
 end
@@ -128,22 +128,22 @@ symboliceval(f, dvar, env, cache)
 Return the second derivative of expr f with respect to dvar1 and dvar2
 """
 
-function symboliceval(m::SymbolicMatrix, dvar::Tuple{Symbol,Symbol}, env::SymbolicEnv{Tv}, cache::SymbolicCache) where Tv
+function symboliceval(m::SymbolicMatrix, dvar::Tuple{Symbol,Symbol}, env::SymbolicEnv, cache::SymbolicCache)
     f = m.elem
     [symboliceval(x, dvar, env, cache) for x = f]
 end
 
-function symboliceval(m::SymbolicCSRMatrix{Ti}, dvar::Tuple{Symbol,Symbol}, env::SymbolicEnv{Tv}, cache::SymbolicCache) where {Ti,Tv}
+function symboliceval(m::SymbolicCSRMatrix, dvar::Tuple{Symbol,Symbol}, env::SymbolicEnv, cache::SymbolicCache)
     f = m.elem
     SparseCSR(f.m, f.n, [symboliceval(x, dvar, env, cache) for x = f.val], f.rowptr, f.colind)
 end
 
-function symboliceval(m::SymbolicCSCMatrix{Ti}, dvar::Tuple{Symbol,Symbol}, env::SymbolicEnv{Tv}, cache::SymbolicCache) where {Ti,Tv}
+function symboliceval(m::SymbolicCSCMatrix, dvar::Tuple{Symbol,Symbol}, env::SymbolicEnv, cache::SymbolicCache)
     f = m.elem
     SparseCSC(f.m, f.n, [symboliceval(x, dvar, env, cache) for x = f.val], f.colptr, f.rowind)
 end
 
-function symboliceval(m::SymbolicCOOMatrix{Ti}, dvar::Tuple{Symbol,Symbol}, env::SymbolicEnv{Tv}, cache::SymbolicCache) where {Ti,Tv}
+function symboliceval(m::SymbolicCOOMatrix, dvar::Tuple{Symbol,Symbol}, env::SymbolicEnv, cache::SymbolicCache)
     f = m.elem
     SparseCOO(f.m, f.n, [symboliceval(x, dvar, env, cache) for x = f.val], f.rowind, f.colind)
 end

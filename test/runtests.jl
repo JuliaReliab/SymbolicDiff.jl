@@ -23,7 +23,7 @@ end
 end
 
 @testset "SymbolicExpression1" begin
-    env = SymbolicEnv{Float64}()
+    env = SymbolicEnv()
     cache = SymbolicCache()
     x = 5.6
     env[:x] = 5.6
@@ -33,7 +33,7 @@ end
 end
 
 @testset "SymbolicExpression2" begin
-    env = SymbolicEnv{Float64}()
+    env = SymbolicEnv()
     cache = SymbolicCache()
     x = 5.6
     env[:x] = 5.6
@@ -43,7 +43,7 @@ end
 end
 
 @testset "SymbolicExpression3" begin
-    env = SymbolicEnv{Float64}()
+    env = SymbolicEnv()
     cache = SymbolicCache()
     x = 5.6
     env[:x] = 5.6
@@ -53,7 +53,7 @@ end
 end
 
 @testset "SymbolicExpression4" begin
-    env = SymbolicEnv{Float64}()
+    env = SymbolicEnv()
     cache = SymbolicCache()
     x = 5.6
     env[:x] = 5.6
@@ -63,7 +63,7 @@ end
 end
 
 @testset "SymbolicExpression5" begin
-    env = SymbolicEnv{Float64}()
+    env = SymbolicEnv()
     cache = SymbolicCache()
     x = 5.6
     env[:x] = 5.6
@@ -73,7 +73,7 @@ end
 end
 
 @testset "SymbolicExpression6" begin
-    env = SymbolicEnv{Float64}()
+    env = SymbolicEnv()
     cache = SymbolicCache()
     x = 5.6
     env[:x] = 5.6
@@ -83,7 +83,7 @@ end
 end
 
 @testset "SymbolicExpression7" begin
-    env = SymbolicEnv{Float64}()
+    env = SymbolicEnv()
     cache = SymbolicCache()
     x = 5.6
     env[:x] = 5.6
@@ -93,7 +93,7 @@ end
 end
 
 @testset "SymbolicExpression8" begin
-    env = SymbolicEnv{Float64}()
+    env = SymbolicEnv()
     cache = SymbolicCache()
     x = 5.6
     env[:x] = 5.6
@@ -103,7 +103,7 @@ end
 end
 
 @testset "SymbolicExpression9" begin
-    env = SymbolicEnv{Float64}()
+    env = SymbolicEnv()
     cache = SymbolicCache()
     x = 5.6
     env[:x] = 5.6
@@ -113,7 +113,7 @@ end
 end
 
 @testset "SymbolicExpressionDeriv1" begin
-    env = SymbolicEnv{Float64}()
+    env = SymbolicEnv()
     cache = SymbolicCache()
     x = 5.6
     env[:x] = 5.6
@@ -123,7 +123,7 @@ end
 end
 
 @testset "SymbolicExpressionDeriv2" begin
-    env = SymbolicEnv{Float64}()
+    env = SymbolicEnv()
     cache = SymbolicCache()
     x = 5.6
     env[:x] = 5.6
@@ -133,7 +133,7 @@ end
 end
 
 @testset "SymbolicExpressionDeriv3" begin
-    env = SymbolicEnv{Float64}()
+    env = SymbolicEnv()
     cache = SymbolicCache()
     x = 5.6
     env[:x] = 5.6
@@ -143,7 +143,7 @@ end
 end
 
 @testset "SymbolicExpressionDeriv4" begin
-    env = SymbolicEnv{Float64}()
+    env = SymbolicEnv()
     cache = SymbolicCache()
     x = 5.6
     y = 10.1
@@ -155,7 +155,7 @@ end
 end
 
 @testset "SymbolicExpressionDeriv5" begin
-    env = SymbolicEnv{Float64}()
+    env = SymbolicEnv()
     cache = SymbolicCache()
     x = 5.6
     y = 10.1
@@ -167,7 +167,7 @@ end
 end
 
 @testset "SymbolicExpressionDeriv6" begin
-    env = SymbolicEnv{Float64}()
+    env = SymbolicEnv()
     cache = SymbolicCache()
     x = 5.6
     y = 10.1
@@ -179,7 +179,7 @@ end
 end
 
 @testset "SymbolicExpressionDeriv7" begin
-    env = SymbolicEnv{Float64}()
+    env = SymbolicEnv()
     cache = SymbolicCache()
     x = 5.6
     env[:x] = x
@@ -189,7 +189,7 @@ end
 end
 
 @testset "SymbolicExpressionDeriv8" begin
-    env = SymbolicEnv{Float64}()
+    env = SymbolicEnv()
     cache = SymbolicCache()
     x = 5.6
     y = 10.1
@@ -204,7 +204,7 @@ end
 end
 
 @testset "SymbolicExpressionDeriv2_1" begin
-    env = SymbolicEnv{Float64}()
+    env = SymbolicEnv()
     cache = SymbolicCache()
     x = 5.6
     y = 10.1
@@ -216,7 +216,7 @@ end
 end
 
 @testset "Macro1" begin
-    env = SymbolicEnv{Float64}()
+    env = SymbolicEnv()
     cache = SymbolicCache()
     x = 5.6
     y = 10.1
@@ -230,7 +230,7 @@ end
 end
 
 @testset "ops1" begin
-    env = SymbolicEnv{Float64}()
+    env = SymbolicEnv()
     cache = SymbolicCache()
     x = 0.56
     y = 0.101
@@ -244,7 +244,7 @@ end
 end
 
 @testset "vector1" begin
-    env = SymbolicEnv{Float64}()
+    env = SymbolicEnv()
     cache = SymbolicCache()
     x = AbstractSymbolic[@expr(x), 1, 1.0]
     println(x)

@@ -35,7 +35,7 @@ SymbolicValue(value::Tv) where Tv = SymbolicValue(Set{Symbol}([]), value)
 convert
 """
 
-function Base.convert(::Type{<:AbstractSymbolic}, x::Number)
+function Base.convert(::Type{<:AbstractSymbolic}, x::Tv) where {Tv <: Number}
     SymbolicValue(x)
 end
 
@@ -43,7 +43,7 @@ end
 iszero
 """
 
-function Base.iszero(x::AbstractSymbolic) where Tv
+function Base.iszero(x::AbstractSymbolic)
     return false
 end
 

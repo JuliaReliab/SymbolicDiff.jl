@@ -30,7 +30,7 @@ symboliceval(f, env, cache)
 Return the value for expr f
 """
 
-function symboliceval(f::SymbolicVector, env::SymbolicEnv{Tv}, cache::SymbolicCache) where Tv
+function symboliceval(f::SymbolicVector, env::SymbolicEnv, cache::SymbolicCache)
     [symboliceval(x, env, cache) for x = f.elem]
 end
 
@@ -39,7 +39,7 @@ symboliceval(f, dvar, env, cache)
 Return the first derivative of expr f with respect to dvar
 """
 
-function symboliceval(f::SymbolicVector, dvar::Symbol, env::SymbolicEnv{Tv}, cache::SymbolicCache) where Tv
+function symboliceval(f::SymbolicVector, dvar::Symbol, env::SymbolicEnv, cache::SymbolicCache)
     [symboliceval(x, dvar, env, cache) for x = f.elem]
 end
 
@@ -48,6 +48,6 @@ symboliceval(f, dvar, env, cache)
 Return the second derivative of expr f with respect to dvar1 and dvar2
 """
 
-function symboliceval(f::SymbolicVector, dvar::Tuple{Symbol,Symbol}, env::SymbolicEnv{Tv}, cache::SymbolicCache) where Tv
+function symboliceval(f::SymbolicVector, dvar::Tuple{Symbol,Symbol}, env::SymbolicEnv, cache::SymbolicCache)
     [symboliceval(x, dvar, env, cache) for x = f.elem]
 end
