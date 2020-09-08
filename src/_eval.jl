@@ -21,7 +21,7 @@ function symboliceval(f::SymbolicVariable{Tv}, env::SymbolicEnv, cache::Symbolic
     end
 end
 
-function symboliceval(f::SymbolicExpression{Tv}, env::SymbolicEnv, cache::SymbolicCache)::Tv where Tv
+function symboliceval(f::SymbolicExpression{Tv}, env::SymbolicEnv, cache::SymbolicCache) where Tv
     get(cache, f) do
         retval = _eval(Val(f.op), f, env, cache)
         cache[f] = retval
