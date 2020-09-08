@@ -126,10 +126,19 @@ function symbolic(expr::Symbol, ::Type{Tv} = Float64) where Tv
     SymbolicVariable{Tv}(Set([expr]), expr)
 end
 
-function symbolic(expr::Nothing, ::Type{Tv} = Float64) where Tv
-    nothing
-end
-
 function symbolic(expr::Tv, ::Type{Tx}) where {Tv,Tx}
     SymbolicValue(expr)
 end
+
+function symbolic(expr::Tv) where Tv
+    SymbolicValue(expr)
+end
+
+function symbolic(expr::Nothing, ::Type{Tv}) where Tv
+    nothing
+end
+
+function symbolic(expr::Nothing) where Tv
+    nothing
+end
+
