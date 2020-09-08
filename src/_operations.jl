@@ -5,53 +5,76 @@ operations
 import Base
 import LinearAlgebra: dot
 
-function Base.:+(x::AbstractSymbolic)
-    SymbolicExpression(x.params, :+, [x])
+function Base.:+(x::AbstractSymbolic{Tv}) where Tv
+    SymbolicExpression{Tv}(x.params, :+, [x])
 end
 
-function Base.:+(x::AbstractSymbolic, xs::Vararg{<:AbstractSymbolic})
-    args = [e for e = (x, xs...)]
-    s = union([x.params for x = args]...)
-    SymbolicExpression(s, :+, args)
+function Base.:-(x::AbstractSymbolic{Tv}) where Tv
+    SymbolicExpression{Tv}(x.params, :-, [x])
 end
 
-function Base.:-(x::AbstractSymbolic)
-    SymbolicExpression(x.params, :-, [x])
+types(::Union{Val{:+},Val{:-},Val{:*},Val{:^}}, ::Type{Int}, ::Type{Int}) = Int
+types(::Val{:/}, ::Type{Int}, ::Type{Int}) = Float64
+types(::Union{Val{:+},Val{:-},Val{:*},Val{:/},Val{:^}}, ::Type{Tx}, ::Type{Ty}) where {Tx<:AbstractFloat,Ty<:Integer} = Tx
+types(::Union{Val{:+},Val{:-},Val{:*},Val{:/},Val{:^}}, ::Type{Tx}, ::Type{Ty}) where {Tx<:Integer,Ty<:AbstractFloat} = Ty
+types(::Union{Val{:+},Val{:-},Val{:*},Val{:/},Val{:^}}, ::Type{Float64}, ::Type{Float64}) = Float64
+
+for op in [:+, :-, :*, :/, :^]
+    @eval function Base.$op(x::AbstractSymbolic{Tx}, y::AbstractSymbolic{Ty}) where {Tx, Ty}
+        s = union(x.params, y.params)
+        SymbolicExpression{types(Val($(Expr(:quote, op))), Tx, Ty)}(s, $(Expr(:quote, op)), [x, y])
+    end
 end
 
-function Base.:-(x::AbstractSymbolic, y::AbstractSymbolic)
-    s = union(x.params, y.params)
-    SymbolicExpression(s, :-, [x, y])
+# function Base.:+(x::AbstractSymbolic{Tv}, xs::Vararg{<:AbstractSymbolic{Tv}}) where Tv
+#     args = [e for e = (x, xs...)]
+#     s = union([x.params for x = args]...)
+#     SymbolicExpression{Tv}(s, :+, args)
+# end
+
+# function Base.:*(x::AbstractSymbolic{Tv}, xs::Vararg{<:AbstractSymbolic{Tv}}) where Tv
+#     args = [e for e = (x, xs...)]
+#     s = union([x.params for x = args]...)
+#     SymbolicExpression{Tv}(s, :*, args)
+# end
+
+# function Base.:+(x::AbstractSymbolic{Tv}, y::AbstractSymbolic{Tv}) where Tv
+#     s = union(x.params, y.params)
+#     SymbolicExpression{Tv}(s, :+, [x, y])
+# end
+
+# function Base.:-(x::AbstractSymbolic{Tv}, y::AbstractSymbolic{Tv}) where Tv
+#     s = union(x.params, y.params)
+#     SymbolicExpression{Tv}(s, :-, [x, y])
+# end
+
+# function Base.:*(x::AbstractSymbolic{Tv}, y::AbstractSymbolic{Tv}) where Tv
+#     s = union(x.params, y.params)
+#     SymbolicExpression{Tv}(s, :*, [x, y])
+# end
+
+# function Base.:/(x::AbstractSymbolic{Tv}, y::AbstractSymbolic{Tv}) where Tv
+#     s = union(x.params, y.params)
+#     SymbolicExpression{Tv}(s, :/, [x, y])
+# end
+
+# function Base.:^(x::AbstractSymbolic{Tv}, y::AbstractSymbolic{Tv}) where Tv
+#     s = union(x.params, y.params)
+#     SymbolicExpression{Tv}(s, :^, [x, y])
+# end
+
+function Base.exp(x::AbstractSymbolic{Tv}) where Tv
+    SymbolicExpression{Tv}(x.params, :exp, [x])
 end
 
-function Base.:*(x::AbstractSymbolic, xs::Vararg{<:AbstractSymbolic})
-    args = [e for e = (x, xs...)]
-    s = union([x.params for x = args]...)
-    SymbolicExpression(s, :*, args)
+function Base.log(x::AbstractSymbolic{Tv}) where Tv
+    SymbolicExpression{Tv}(x.params, :log, [x])
 end
 
-function Base.:/(x::AbstractSymbolic, y::AbstractSymbolic)
-    s = union(x.params, y.params)
-    SymbolicExpression(s, :/, [x, y])
+function Base.sqrt(x::AbstractSymbolic{Tv}) where Tv
+    SymbolicExpression{Tv}(x.params, :sqrt, [x])
 end
 
-function Base.:^(x::AbstractSymbolic, y::AbstractSymbolic)
-    s = union(x.params, y.params)
-    SymbolicExpression(s, :^, [x, y])
-end
-
-function Base.exp(x::AbstractSymbolic)
-    SymbolicExpression(x.params, :exp, [x])
-end
-
-function Base.log(x::AbstractSymbolic)
-    SymbolicExpression(x.params, :log, [x])
-end
-
-function Base.sqrt(x::AbstractSymbolic)
-    SymbolicExpression(x.params, :sqrt, [x])
-end
-
-function dot(x::AbstractSymbolic, y::AbstractSymbolic)
-    SymbolicExpression(union(x.params, y.params), :dot, [x, y])
+function dot(x::AbstractSymbolic{Tv}, y::AbstractSymbolic{Tv}) where Tv
+    SymbolicExpression{Tv}(union(x.params, y.params), :dot, [x, y])
 end

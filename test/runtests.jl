@@ -18,7 +18,7 @@ end
 end
 
 @testset "SymbolicVariable" begin
-    x = SymbolicVariable(:a)
+    x = symbolic(:a)
     @test x.var == :a
 end
 
@@ -28,6 +28,7 @@ end
     x = 5.6
     env[:x] = 5.6
     expr = symbolic(:(x + 1.6))
+    println(expr)
     y = symboliceval(expr, env, cache)
     @test y == x + 1.6
 end
@@ -117,7 +118,7 @@ end
     cache = SymbolicCache()
     x = 5.6
     env[:x] = 5.6
-    expr = symbolic(:(4 * x + 1.6))
+    expr = symbolic(:(4.0 * x + 1.6))
     y = symboliceval(expr, :x, env, cache)
     @test y == 4.0
 end
@@ -127,7 +128,7 @@ end
     cache = SymbolicCache()
     x = 5.6
     env[:x] = 5.6
-    expr = symbolic(:(-4 * x - 1.6 * x))
+    expr = symbolic(:(-4.0 * x - 1.6 * x))
     y = symboliceval(expr, :x, env, cache)
     @test y == -4-1.6
 end
@@ -137,7 +138,8 @@ end
     cache = SymbolicCache()
     x = 5.6
     env[:x] = 5.6
-    expr = symbolic(:(-4 * x * x))
+    expr = symbolic(:(-4.0 * x * x))
+    println(expr)
     y = symboliceval(expr, :x, env, cache)
     @test y == -8 * x
 end
@@ -149,7 +151,7 @@ end
     y = 10.1
     env[:x] = x
     env[:y] = y
-    expr = symbolic(:(-4 * x / y))
+    expr = symbolic(:(-4.0 * x / y))
     res = symboliceval(expr, :x, env, cache)
     @test res == -4 / y
 end
@@ -161,7 +163,7 @@ end
     y = 10.1
     env[:x] = x
     env[:y] = y
-    expr = symbolic(:(-4 * x / y))
+    expr = symbolic(:(-4.0 * x / y))
     res = symboliceval(expr, :y, env, cache)
     @test res == 4 * x / y^2
 end
@@ -421,4 +423,19 @@ end
     # ex = (symboliceval(expr, test1, SymbolicCache()) - 2*symboliceval(expr, test, SymbolicCache()) + symboliceval(expr, test2, SymbolicCache())) / (h^2)
     # @test isapprox(ex, 4*3*x^2)
     @test isapprox(symboliceval(expr, (:x,:x), test, SymbolicCache()), 4*3*x^2)
+end
+
+@testset "SymbolicMat4" begin
+    m = @expr [0 x 0; 0 4 y]
+    println(SymbolicCSRMatrix(m))
+end
+
+@testset "SymbolicMat5" begin
+    m = @expr [0 x 0; 0 4 y]
+    println(SymbolicCSCMatrix(m))
+end
+
+@testset "SymbolicMat6" begin
+    m = @expr [0 x 0; 0 4 y]
+    println(SymbolicCOOMatrix(m))
 end

@@ -15,13 +15,13 @@ function symboliceval(f::SymbolicValue{Tv}, env::SymbolicEnv, cache::SymbolicCac
     f.val
 end
 
-function symboliceval(f::SymbolicVariable, env::SymbolicEnv, cache::SymbolicCache)
+function symboliceval(f::SymbolicVariable{Tv}, env::SymbolicEnv, cache::SymbolicCache)::Tv where Tv
     get(env, f.var) do
         0
     end
 end
 
-function symboliceval(f::SymbolicExpression, env::SymbolicEnv, cache::SymbolicCache)
+function symboliceval(f::SymbolicExpression{Tv}, env::SymbolicEnv, cache::SymbolicCache)::Tv where Tv
     get(cache, f) do
         retval = _eval(Val(f.op), f, env, cache)
         cache[f] = retval
@@ -34,47 +34,47 @@ _eval(::Val{xx}, f, env, cache)
 Dispached function to evaluate the expr f
 """
 
-function _eval(::Val{:+}, f::SymbolicExpression, env::SymbolicEnv, cache::SymbolicCache)
+function _eval(::Val{:+}, f::SymbolicExpression{Tv}, env::SymbolicEnv, cache::SymbolicCache)::Tv where Tv
     args = [symboliceval(x, env, cache) for x = f.args]
     +(args...)
 end
 
-function _eval(::Val{:-}, f::SymbolicExpression, env::SymbolicEnv, cache::SymbolicCache)
+function _eval(::Val{:-}, f::SymbolicExpression{Tv}, env::SymbolicEnv, cache::SymbolicCache)::Tv where Tv
     args = [symboliceval(x, env, cache) for x = f.args]
     -(args...)
 end
 
-function _eval(::Val{:*}, f::SymbolicExpression, env::SymbolicEnv, cache::SymbolicCache)
+function _eval(::Val{:*}, f::SymbolicExpression{Tv}, env::SymbolicEnv, cache::SymbolicCache)::Tv where Tv
     args = [symboliceval(x, env, cache) for x = f.args]
     *(args...)
 end
 
-function _eval(::Val{:/}, f::SymbolicExpression, env::SymbolicEnv, cache::SymbolicCache)
+function _eval(::Val{:/}, f::SymbolicExpression{Tv}, env::SymbolicEnv, cache::SymbolicCache)::Tv where Tv
     x,y = [symboliceval(x, env, cache) for x = f.args]
     x/y
 end
 
-function _eval(::Val{:^}, f::SymbolicExpression, env::SymbolicEnv, cache::SymbolicCache)
+function _eval(::Val{:^}, f::SymbolicExpression{Tv}, env::SymbolicEnv, cache::SymbolicCache)::Tv where Tv
     x,y = [symboliceval(x, env, cache) for x = f.args]
     x^y
 end
 
-function _eval(::Val{:exp}, f::SymbolicExpression, env::SymbolicEnv, cache::SymbolicCache)
+function _eval(::Val{:exp}, f::SymbolicExpression{Tv}, env::SymbolicEnv, cache::SymbolicCache)::Tv where Tv
     x, = [symboliceval(x, env, cache) for x = f.args]
     exp(x)
 end
 
-function _eval(::Val{:log}, f::SymbolicExpression, env::SymbolicEnv, cache::SymbolicCache)
+function _eval(::Val{:log}, f::SymbolicExpression{Tv}, env::SymbolicEnv, cache::SymbolicCache)::Tv where Tv
     x, = [symboliceval(x, env, cache) for x = f.args]
     log(x)
 end
 
-function _eval(::Val{:sqrt}, f::SymbolicExpression, env::SymbolicEnv, cache::SymbolicCache)
+function _eval(::Val{:sqrt}, f::SymbolicExpression{Tv}, env::SymbolicEnv, cache::SymbolicCache)::Tv where Tv
     x, = [symboliceval(x, env, cache) for x = f.args]
     sqrt(x)
 end
 
-function _eval(::Val{:dot}, f::SymbolicExpression, env::SymbolicEnv, cache::SymbolicCache)
+function _eval(::Val{:dot}, f::SymbolicExpression{Tv}, env::SymbolicEnv, cache::SymbolicCache)::Tv where Tv
     x,y = [symboliceval(x, env, cache) for x = f.args]
     dot(x,y)
 end

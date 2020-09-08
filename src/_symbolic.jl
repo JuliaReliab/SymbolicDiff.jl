@@ -16,7 +16,7 @@ AbstractSymbolic has the filed
 - params::Set{Symbol} A set of Symbol included in expr
 """
 
-abstract type AbstractSymbolic end
+abstract type AbstractSymbolic{Tv} end
 
 """
 SymbolicValue
@@ -24,7 +24,7 @@ SymbolicValue
 A constant value
 """
 
-struct SymbolicValue{Tv <: Number} <: AbstractSymbolic
+struct SymbolicValue{Tv} <: AbstractSymbolic{Tv}
     params::Set{Symbol}
     val::Tv
 end
@@ -57,12 +57,10 @@ SymbolicVariable
 A variable to be derivatived
 """
 
-struct SymbolicVariable <: AbstractSymbolic
+struct SymbolicVariable{Tv} <: AbstractSymbolic{Tv}
     params::Set{Symbol}
     var::Symbol
 end
-
-SymbolicVariable(param::Symbol) = SymbolicVariable(Set([param]), param)
 
 """
 SymbolicExpr
@@ -70,7 +68,7 @@ SymbolicExpr
 An expr
 """
 
-struct SymbolicExpression <: AbstractSymbolic
+struct SymbolicExpression{Tv} <: AbstractSymbolic{Tv}
     params::Set{Symbol}
     op::Symbol
     args::Vector{<:AbstractSymbolic}
@@ -84,15 +82,6 @@ function Base.show(io::IO, x::AbstractSymbolic)
     expr = _toexpr(x)
     Base.show(io, expr)
 end
-
-# function Base.show(io::IO, x::SymbolicVariable)
-#     Base.show(io, x.var)
-# end
-
-# function Base.show(io::IO, x::SymbolicExpression)
-#     expr = _toexpr(x)
-#     Base.show(io, expr)
-# end
 
 function _toexpr(x::SymbolicExpression)
     args = [_toexpr(e) for e = x.args]
@@ -117,31 +106,30 @@ Build a SymbolicExpression
 const operations = [:+, :-, :*, :/, :^]
 
 
-function symbolic(expr::Expr)
+function symbolic(expr::Expr, ::Type{Tv} = Float64) where Tv
     if Meta.isexpr(expr, :call) && expr.args[1] in operations
-        args = [symbolic(x) for x = expr.args[2:end]]
-        params = [x.params for x = args]
-        SymbolicExpression(union(params...), expr.args[1], args)
+        args = [symbolic(x, Tv) for x = expr.args[2:end]]
+        eval(Expr(:call, expr.args[1], args...))
     elseif Meta.isexpr(expr, :vect)
-        vec = [symbolic(x) for x = expr.args]
-        symbolic(vec)
+        vec = [symbolic(x, Tv) for x = expr.args]
+        symbolic(vec, Tv)
     elseif Meta.isexpr(expr, :vcat)
-        elem = [Expr(:row, [symbolic(y) for y = x.args]...) for x = expr.args]
+        elem = [Expr(:row, [symbolic(y, Tv) for y = x.args]...) for x = expr.args]
         mat = eval(Expr(:vcat, elem...))
-        symbolic(mat)
+        symbolic(mat, Tv)
     else
         nothing
     end
 end
 
-function symbolic(expr::Symbol)
-    SymbolicVariable(expr)
+function symbolic(expr::Symbol, ::Type{Tv} = Float64) where Tv
+    SymbolicVariable{Tv}(Set([expr]), expr)
 end
 
-function symbolic(expr::Nothing)
+function symbolic(expr::Nothing, ::Type{Tv} = Float64) where Tv
     nothing
 end
 
-function symbolic(expr::Tv) where {Tv <: Number}
+function symbolic(expr::Tv, ::Type{Tx}) where {Tv,Tx}
     SymbolicValue(expr)
 end
