@@ -2,9 +2,6 @@
 operations
 """
 
-import Base
-import LinearAlgebra: dot
-
 function Base.:+(x::AbstractSymbolic{Tv}) where Tv
     SymbolicExpression{Tv}(x.params, :+, [x])
 end

@@ -3,9 +3,6 @@
 SymbolicMatrix
 """
 
-export symbolic, AbstractSymbolicMatrix, SymbolicCSRMatrix, SymbolicCSCMatrix, SymbolicCOOMatrix, SymbolicMatrix
-import SparseMatrix: SparseCSR, SparseCSC, SparseCOO
-
 abstract type AbstractSymbolicMatrix{Tv} <: AbstractSymbolicVectorMatrix{Tv} end
 
 struct SymbolicMatrix{Tv} <: AbstractSymbolicMatrix{Tv}

@@ -2,10 +2,6 @@
 SymbolicVector
 """
 
-export symbolic, AbstractSymbolicVectorMatrix, AbstractSymbolicVector
-
-import Base
-
 abstract type AbstractSymbolicVectorMatrix{Tv} <: AbstractSymbolic{Tv} end
 abstract type AbstractSymbolicVector{Tv} <: AbstractSymbolicVectorMatrix{Tv} end
 

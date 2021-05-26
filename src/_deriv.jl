@@ -2,8 +2,6 @@
 Module: SymbolicDiff (Symbolic Operation for Arithmetic)
 """
 
-export symboliceval
-
 """
 symboliceval(f, dvar, env, cache)
 Return the first derivative of expr f with respect to dvar

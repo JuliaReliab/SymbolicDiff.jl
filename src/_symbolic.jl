@@ -2,11 +2,6 @@
 Module: SymbolicDiff (Symbolic Operation for Arithmetic)
 """
 
-export AbstractSymbolic, SymbolicVariable, SymbolicValue, SymbolicExpression
-export symbolic
-
-import Base
-
 """
 AbstractSymbolic
 
@@ -103,7 +98,7 @@ symbolicexpr(expr)
 Build a SymbolicExpression
 """
 
-const operations = [:+, :-, :*, :/, :^]
+const operations = [:+, :-, :*, :/, :^, :exp, :sqrt, :log]
 
 
 function symbolic(expr::Expr, ::Type{Tv} = Float64) where Tv

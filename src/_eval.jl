@@ -2,10 +2,6 @@
 Module: SymbolicDiff (Symbolic Operation for Arithmetic)
 """
 
-export symboliceval
-
-using LinearAlgebra: dot
-
 """
 symboliceval(f, env, cache)
 Return the value for expr f
@@ -65,6 +61,7 @@ function _eval(::Val{:exp}, f::SymbolicExpression{Tv}, env::SymbolicEnv, cache::
 end
 
 function _eval(::Val{:log}, f::SymbolicExpression{Tv}, env::SymbolicEnv, cache::SymbolicCache)::Tv where Tv
+    @assert length(f.args) == 1
     x, = [symboliceval(x, env, cache) for x = f.args]
     log(x)
 end

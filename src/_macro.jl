@@ -2,8 +2,6 @@
 Module: SymbolicDiff (Symbolic Operation for Arithmetic)
 """
 
-export @env, @expr
-
 
 """
 @env(envname, block)
@@ -54,6 +52,6 @@ f = @expr x^2 + y
 """
 
 macro expr(x)
-    Expr(:call, :symbolic, Expr(:quote, x))
+    esc(Expr(:call, :symbolic, Expr(:quote, x)))
 end
 

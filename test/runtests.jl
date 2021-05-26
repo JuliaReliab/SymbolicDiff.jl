@@ -88,7 +88,7 @@ end
     cache = SymbolicCache()
     x = 5.6
     env[:x] = 5.6
-    expr = log(symbolic(:(x ^ 1.6)))
+    expr = @expr log(x ^ 1.6)
     y = symboliceval(expr, env, cache)
     @test y == log(x ^ 1.6)
 end
@@ -108,7 +108,7 @@ end
     cache = SymbolicCache()
     x = 5.6
     env[:x] = 5.6
-    expr = sqrt(symbolic(:(x^ 1.6)))
+    expr = @expr sqrt(x^ 1.6)
     y = symboliceval(expr, env, cache)
     @test y == sqrt(x ^ 1.6)
 end
@@ -240,9 +240,34 @@ end
         x = x
         y = y
     end
-    expr = exp(@expr x^2 + 10*x*y + 4*y^2)
+    expr = @expr exp(x^2 + 10*x*y + 4*y^2)
     res = symboliceval(expr, (:x,:y), env, cache)
     @test res == exp(x^2 + 10*x*y + 4*y^2) * (10*x + 8*y) * (2*x + 10*y) + exp(x^2 + 10*x*y + 4*y^2) * 10
+end
+
+@testset "lam1" begin
+    env = SymbolicEnv()
+    cache = SymbolicCache()
+    t = rand()
+    lam1 = rand()
+    lam2 = rand()
+    @env env begin
+        t = t
+        lam1 = lam1
+        lam2 = lam2
+    end
+    expr = @expr exp(-lam1*t) - (lam1/lam2) * exp(-lam1*t) * (exp(-lam2*t) - 1)
+    res1 = symboliceval(expr, :lam1, env, cache)
+    @test res1 ≈ -t*exp(-lam1*t) - (1/lam2)*exp(-lam1*t)*(exp(-lam2*t)-1) + t*(lam1/lam2)*exp(-lam1*t)*(exp(-lam2*t)-1)
+    res2 = symboliceval(expr, :lam2, env, cache)
+    @test res2 ≈ (lam1/lam2^2)*exp(-lam1*t)*(exp(-lam2*t)-1) + t*(lam1/lam2)*exp(-lam1*t)*exp(-lam2*t)
+    res3 = symboliceval(expr, (:lam2,:lam1), env, cache)
+    res4 = symboliceval(expr, (:lam1,:lam2), env, cache)
+    @test isapprox(res3, res4)
+    @test isapprox((1/lam2^2)*exp(-lam1*t)*(exp(-lam2*t)-1) - t*(lam1/lam2^2)*exp(-lam1*t)*(exp(-lam2*t)-1) + t*(1/lam2)*exp(-lam1*t)*exp(-lam2*t) - t^2*(lam1/lam2)*exp(-lam1*t)*exp(-lam2*t),
+                    (1/lam2^2)*exp(-lam1*t)*(exp(-lam2*t)-1) + t*(1/lam2)*exp(-lam1*t)*exp(-lam2*t) - t*(lam1/lam2^2)*exp(-lam1*t)*(exp(-lam2*t)-1) - t^2*(lam1/lam2)*exp(-lam1*t)*exp(-lam2*t))
+    @test res3 ≈ (1/lam2^2)*exp(-lam1*t)*(exp(-lam2*t)-1) - t*(lam1/lam2^2)*exp(-lam1*t)*(exp(-lam2*t)-1) + t*(1/lam2)*exp(-lam1*t)*exp(-lam2*t) - t^2*(lam1/lam2)*exp(-lam1*t)*exp(-lam2*t)
+    @test res4 ≈ (1/lam2^2)*exp(-lam1*t)*(exp(-lam2*t)-1) + t*(1/lam2)*exp(-lam1*t)*exp(-lam2*t) - t*(lam1/lam2^2)*exp(-lam1*t)*(exp(-lam2*t)-1) - t^2*(lam1/lam2)*exp(-lam1*t)*exp(-lam2*t)
 end
 
 @testset "vector1" begin
@@ -253,7 +278,7 @@ end
 end
 
 @testset "SymbolicVector1" begin
-    v = symbolic([@expr x + $(i) for i = 1:10])
+    v = symbolic([@expr x + $i for i = 1:10])
     x = 10
     @env test begin
         x = x
@@ -262,7 +287,7 @@ end
 end
 
 @testset "SymbolicVector1" begin
-    v = symbolic([@expr x^$i + $(i) for i = 1:10])
+    v = symbolic([@expr x^$i + $i for i = 1:10])
     x = 10
     @env test begin
         x = x
@@ -271,7 +296,7 @@ end
 end
 
 @testset "SymbolicCSR1" begin
-    v = [@expr x^$i + $(i) for i = 1:9]
+    v = [@expr x^$i + $i for i = 1:9]
     m = symbolic(SparseCSR(3, 3, v, [1, 4, 7, 10], [1, 2, 3, 1, 2, 3, 1, 2, 3]))
     x = 10
     @env test begin
@@ -281,7 +306,7 @@ end
 end
 
 @testset "SymbolicCSR2" begin
-    v = [@expr x^$i + $(i) for i = 1:9]
+    v = [@expr x^$i + $i for i = 1:9]
     m = symbolic(SparseCSR(3, 3, v, [1, 4, 7, 10], [1, 2, 3, 1, 2, 3, 1, 2, 3]))
     x = 10
     @env test begin
@@ -291,7 +316,7 @@ end
 end
 
 @testset "SymbolicCSC1" begin
-    v = [@expr x^$i + $(i) for i = 1:9]
+    v = [@expr x^$i + $i for i = 1:9]
     m = symbolic(SparseCSC(3, 3, v, [1, 4, 7, 10], [1, 2, 3, 1, 2, 3, 1, 2, 3]))
     x = 10
     @env test begin
@@ -301,7 +326,7 @@ end
 end
 
 @testset "SymbolicCSC2" begin
-    v = [@expr x^$i + $(i) for i = 1:9]
+    v = [@expr x^$i + $i for i = 1:9]
     m = symbolic(SparseCSC(3, 3, v, [1, 4, 7, 10], [1, 2, 3, 1, 2, 3, 1, 2, 3]))
     x = 10
     @env test begin
@@ -311,7 +336,7 @@ end
 end
 
 @testset "SymbolicCOO1" begin
-    v = [@expr x^$i + $(i) for i = 1:9]
+    v = [@expr x^$i + $i for i = 1:9]
     m = symbolic(SparseCOO(3, 3, v, [1, 1, 1, 2, 2, 2, 3, 3, 3], [1, 2, 3, 1, 2, 3, 1, 2, 3]))
     x = 10
     @env test begin
@@ -321,7 +346,7 @@ end
 end
 
 @testset "SymbolicCOO2" begin
-    v = [@expr x^$i + $(i) for i = 1:9]
+    v = [@expr x^$i + $i for i = 1:9]
     m = symbolic(SparseCOO(3, 3, v, [1, 1, 1, 2, 2, 2, 3, 3, 3], [1, 2, 3, 1, 2, 3, 1, 2, 3]))
     x = 10
     @env test begin
@@ -331,7 +356,7 @@ end
 end
 
 @testset "SymbolicMat1" begin
-    m = symbolic([@expr x^$i + $(i) for i = 1:3, j = 1:3])
+    m = symbolic([@expr x^$i + $i for i = 1:3, j = 1:3])
     x = 10
     @env test begin
         x = x
@@ -340,7 +365,7 @@ end
 end
 
 @testset "SymbolicMat2" begin
-    m = symbolic([@expr x^$i + $(i) for i = 1:3, j = 1:3])
+    m = symbolic([@expr x^$i + $i for i = 1:3, j = 1:3])
     x = 10
     @env test begin
         x = x

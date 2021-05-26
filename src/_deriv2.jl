@@ -2,8 +2,6 @@
 Module: SymbolicDiff (Symbolic Operation for Arithmetic)
 """
 
-export symboliceval
-
 """
 symboliceval(f, (dvar1, dver2), env, cache)
 Return the second derivative of expr f with respect to dvar1 and dver2
@@ -71,7 +69,7 @@ function _eval(::Val{:/}, f::SymbolicExpression{Tv}, dvar::Tuple{Symbol,Symbol},
     dx_a,dy_a = [symboliceval(x, dvar[1], env, cache) for x = f.args]
     dx_b,dy_b = [symboliceval(x, dvar[2], env, cache) for x = f.args]
     dx_ab,dy_ab = [symboliceval(x, dvar, env, cache) for x = f.args]
-    ((dx_ab * y + dx_a * dy_b - dx_b * dy_a - x * dy_ab) * y + (dx_a * y - x * dy_a) * 2 * dy_b) / y^3
+    ((dx_ab * y - dx_a * dy_b  - dx_b * dy_a - x * dy_ab) * y + 2 * x * dy_a * dy_b) / y^3
 end
 
 function _eval(::Val{:^}, f::SymbolicExpression{Tv}, dvar::Tuple{Symbol,Symbol}, env::SymbolicEnv, cache::SymbolicCache)::Tv where Tv
