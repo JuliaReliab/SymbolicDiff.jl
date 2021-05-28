@@ -1,3 +1,7 @@
+# v0.7.0
+
+- Refactor the style of vecmat
+
 # v0.6.5
 
 - Define the conversion and promotion

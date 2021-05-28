@@ -1,5 +1,6 @@
 using SymbolicDiff
 using SparseMatrix
+using SparseArrays
 using LinearAlgebra
 using Test
 
@@ -278,7 +279,7 @@ end
 end
 
 @testset "SymbolicVector1" begin
-    v = symbolic([@expr x + $i for i = 1:10])
+    v = [@expr x + $i for i = 1:10]
     x = 10
     @env test begin
         x = x
@@ -287,7 +288,7 @@ end
 end
 
 @testset "SymbolicVector1" begin
-    v = symbolic([@expr x^$i + $i for i = 1:10])
+    v = [@expr x^$i + $i for i = 1:10]
     x = 10
     @env test begin
         x = x
@@ -297,7 +298,7 @@ end
 
 @testset "SymbolicCSR1" begin
     v = [@expr x^$i + $i for i = 1:9]
-    m = symbolic(SparseCSR(3, 3, v, [1, 4, 7, 10], [1, 2, 3, 1, 2, 3, 1, 2, 3]))
+    m = SparseCSR(3, 3, v, [1, 4, 7, 10], [1, 2, 3, 1, 2, 3, 1, 2, 3])
     x = 10
     @env test begin
         x = x
@@ -307,7 +308,7 @@ end
 
 @testset "SymbolicCSR2" begin
     v = [@expr x^$i + $i for i = 1:9]
-    m = symbolic(SparseCSR(3, 3, v, [1, 4, 7, 10], [1, 2, 3, 1, 2, 3, 1, 2, 3]))
+    m = SparseCSR(3, 3, v, [1, 4, 7, 10], [1, 2, 3, 1, 2, 3, 1, 2, 3])
     x = 10
     @env test begin
         x = x
@@ -317,7 +318,7 @@ end
 
 @testset "SymbolicCSC1" begin
     v = [@expr x^$i + $i for i = 1:9]
-    m = symbolic(SparseCSC(3, 3, v, [1, 4, 7, 10], [1, 2, 3, 1, 2, 3, 1, 2, 3]))
+    m = SparseCSC(3, 3, v, [1, 4, 7, 10], [1, 2, 3, 1, 2, 3, 1, 2, 3])
     x = 10
     @env test begin
         x = x
@@ -327,7 +328,7 @@ end
 
 @testset "SymbolicCSC2" begin
     v = [@expr x^$i + $i for i = 1:9]
-    m = symbolic(SparseCSC(3, 3, v, [1, 4, 7, 10], [1, 2, 3, 1, 2, 3, 1, 2, 3]))
+    m = SparseCSC(3, 3, v, [1, 4, 7, 10], [1, 2, 3, 1, 2, 3, 1, 2, 3])
     x = 10
     @env test begin
         x = x
@@ -337,7 +338,7 @@ end
 
 @testset "SymbolicCOO1" begin
     v = [@expr x^$i + $i for i = 1:9]
-    m = symbolic(SparseCOO(3, 3, v, [1, 1, 1, 2, 2, 2, 3, 3, 3], [1, 2, 3, 1, 2, 3, 1, 2, 3]))
+    m = SparseCOO(3, 3, v, [1, 1, 1, 2, 2, 2, 3, 3, 3], [1, 2, 3, 1, 2, 3, 1, 2, 3])
     x = 10
     @env test begin
         x = x
@@ -347,7 +348,7 @@ end
 
 @testset "SymbolicCOO2" begin
     v = [@expr x^$i + $i for i = 1:9]
-    m = symbolic(SparseCOO(3, 3, v, [1, 1, 1, 2, 2, 2, 3, 3, 3], [1, 2, 3, 1, 2, 3, 1, 2, 3]))
+    m = SparseCOO(3, 3, v, [1, 1, 1, 2, 2, 2, 3, 3, 3], [1, 2, 3, 1, 2, 3, 1, 2, 3])
     x = 10
     @env test begin
         x = x
@@ -356,7 +357,7 @@ end
 end
 
 @testset "SymbolicMat1" begin
-    m = symbolic([@expr x^$i + $i for i = 1:3, j = 1:3])
+    m = [@expr x^$i + $i for i = 1:3, j = 1:3]
     x = 10
     @env test begin
         x = x
@@ -365,7 +366,7 @@ end
 end
 
 @testset "SymbolicMat2" begin
-    m = symbolic([@expr x^$i + $i for i = 1:3, j = 1:3])
+    m = [@expr x^$i + $i for i = 1:3, j = 1:3]
     x = 10
     @env test begin
         x = x
@@ -451,18 +452,87 @@ end
 end
 
 @testset "SymbolicMat4" begin
-    m = @expr [0 x 0; 0 4 y]
-    println(SymbolicCSRMatrix(m))
+    m = SparseCSR(@expr [0 x 0; 0 z y])
+    println(m)
+    x = 10.0
+    y = 0.8
+    z = 4
+    @env test begin
+        x = x
+        y = y
+        z = z
+    end
+    @env test2 begin
+        x = 1.0
+        y = 0.0
+        z = 0.0
+    end
+    result = symboliceval(m, :x, test, SymbolicCache())
+    expected = symboliceval(m, test2, SymbolicCache())
+    @test isapprox(expected.val, result.val)
 end
 
 @testset "SymbolicMat5" begin
-    m = @expr [0 x 0; 0 4 y]
-    println(SymbolicCSCMatrix(m))
+    m = SparseCSC(@expr [0 x 0; 0 z y])
+    println(m)
+    x = 10.0
+    y = 0.8
+    z = 4
+    @env test begin
+        x = x
+        y = y
+        z = z
+    end
+    @env test2 begin
+        x = 1.0
+        y = 0.0
+        z = 0.0
+    end
+    result = symboliceval(m, :x, test, SymbolicCache())
+    expected = symboliceval(m, test2, SymbolicCache())
+    @test isapprox(expected.val, result.val)
 end
 
 @testset "SymbolicMat6" begin
-    m = @expr [0 x 0; 0 4 y]
-    println(SymbolicCOOMatrix(m))
+    m = SparseCOO(@expr [0 x 0; 0 z y])
+    println(m)
+    x = 10.0
+    y = 0.8
+    z = 4
+    @env test begin
+        x = x
+        y = y
+        z = z
+    end
+    @env test2 begin
+        x = 1.0
+        y = 0.0
+        z = 0.0
+    end
+    result = symboliceval(m, :x, test, SymbolicCache())
+    expected = symboliceval(m, test2, SymbolicCache())
+    @test isapprox(expected.val, result.val)
+end
+
+@testset "SymbolicMat7" begin
+    m = sparse(@expr [0 x 0; 0 z y])
+    println(m)
+    x = 10.0
+    y = 0.8
+    z = 4
+    @env test begin
+        x = x
+        y = y
+        z = z
+    end
+    @env test2 begin
+        x = 1.0
+        y = 0.0
+        z = 0.0
+    end
+    result = symboliceval(m, :x, test, SymbolicCache())
+    expected = symboliceval(m, test2, SymbolicCache())
+    @test isapprox(expected, result)
 end
 
 @testset "Promotion1" begin
@@ -486,4 +556,11 @@ end
     x = [a, 1]
     @test typeof(x[1]) == SymbolicVariable{Float64}
     @test typeof(x[2]) == SymbolicValue{Float64}
+end
+
+@testset "Promotion4" begin
+    a = symbolic(:a)
+    x = a + 1
+    println(x)
+    @test typeof(x) == SymbolicExpression{Float64}
 end

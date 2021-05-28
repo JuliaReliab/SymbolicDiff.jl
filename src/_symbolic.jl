@@ -46,38 +46,40 @@ An expr
 struct SymbolicExpression{Tv} <: AbstractSymbolic{Tv}
     params::Set{Symbol}
     op::Symbol
-    args::Vector{<:AbstractSymbolic}
+#    args::Vector{<:AbstractSymbolic{Tv}}
+    args
 end
 
 """
 convert
 """
 
-function Base.convert(::Type{SymbolicVariable{T}}, x::SymbolicVariable{S}) where {T<:Number,S<:Number}
+function Base.convert(::Type{<:AbstractSymbolic{T}}, x::SymbolicVariable{S}) where {T<:Number,S<:Number}
     symbolic(x.var, T)
 end
 
-function Base.convert(::Type{SymbolicValue{T}}, x::SymbolicValue{S}) where {T<:Number,S<:Number}
-    SymbolicValue(T(x.val))
+function Base.convert(::Type{<:AbstractSymbolic{T}}, x::SymbolicValue{S}) where {T<:Number,S<:Number}
+    symbolic(T(x.val), T)
 end
 
 function Base.convert(::Type{<:AbstractSymbolic{T}}, x::S) where {T<:Number,S<:Number}
-    SymbolicValue(T(x))
+    symbolic(T(x), T)
 end
+
+function Base.convert(::Type{<:AbstractSymbolic{T}}, x::SymbolicExpression{S}) where {T<:Number,S<:Number}
+    SymbolicExpression{T}(x.params, x.op, [convert(AbstractSymbolic{T}, u) for u = x.args]) 
+end
+
 
 """
 promotion
 """
 
-function Base.promote_rule(::Type{SymbolicVariable{T}}, ::Type{SymbolicVariable{S}}) where {T<:Number,S<:Number}
-    SymbolicVariable{promote_type(T,S)}
-end
-
-function Base.promote_rule(::Type{SymbolicValue{T}}, ::Type{SymbolicValue{S}}) where {T<:Number,S<:Number}
-    SymbolicValue{promote_type(T,S)}
-end
-
 function Base.promote_rule(::Type{<:AbstractSymbolic{T}}, ::Type{S}) where {T<:Number,S<:Number}
+    AbstractSymbolic{promote_type(T,S)}
+end
+
+function Base.promote_rule(::Type{<:AbstractSymbolic{T}}, ::Type{<:AbstractSymbolic{S}}) where {T<:Number,S<:Number}
     AbstractSymbolic{promote_type(T,S)}
 end
 
@@ -85,12 +87,16 @@ end
 iszero
 """
 
-function Base.iszero(x::AbstractSymbolic)
-    return false
+function Base.iszero(x::AbstractSymbolic{Tv}) where Tv
+    false
 end
 
 function Base.iszero(x::SymbolicValue{Tv}) where Tv
-    return Base.iszero(x.val)
+    Base.iszero(x.val)
+end
+
+function Base.zero(::Type{AbstractSymbolic{Tv}}) where Tv
+    SymbolicValue(Tv(0))
 end
 
 """

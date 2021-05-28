@@ -52,6 +52,17 @@ f = @expr x^2 + y
 """
 
 macro expr(x)
-    esc(Expr(:call, :symbolic, Expr(:quote, x)))
+    esc(_genexpr(x))
 end
 
+function _genexpr(x)
+    if Meta.isexpr(x, :vect)
+        Expr(:vect, [_genexpr(u) for u = x.args]...)
+    elseif Meta.isexpr(x, :vcat)
+        Expr(:vcat, [_genexpr(u) for u = x.args]...)
+    elseif Meta.isexpr(x, :row)
+        Expr(:row, [_genexpr(u) for u = x.args]...)
+    else
+        Expr(:call, :symbolic, Expr(:quote, x))
+    end
+end

@@ -11,6 +11,7 @@ export @env, @expr
 import Base
 import LinearAlgebra: dot
 import SparseMatrix: SparseCSR, SparseCSC, SparseCOO
+import SparseArrays: SparseMatrixCSC
 
 include("_symbolic.jl")
 include("_operations.jl")
