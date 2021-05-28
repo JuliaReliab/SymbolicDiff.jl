@@ -1,7 +1,7 @@
 name = "SymbolicDiff"
 uuid = "36d81f91-e041-498f-9150-12818d600b71"
 authors = ["Hiroyuki Okamura"]
-version = "0.6.4"
+version = "0.6.5"
 
 [deps]
 LinearAlgebra = "37e2e46d-f89d-539d-b4ee-838fcccc9c8e"

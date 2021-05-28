@@ -1,3 +1,7 @@
+# v0.6.5
+
+- Define the conversion and promotion
+
 # v0.6.4
 
 - symboliceval is changed to take AbstractSymbolic

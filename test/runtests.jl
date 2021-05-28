@@ -273,7 +273,7 @@ end
 @testset "vector1" begin
     env = SymbolicEnv()
     cache = SymbolicCache()
-    x = AbstractSymbolic[@expr(x), 1, 1.0]
+    x = [@expr(x), 1, 1.0]
     println(x)
 end
 
@@ -463,4 +463,27 @@ end
 @testset "SymbolicMat6" begin
     m = @expr [0 x 0; 0 4 y]
     println(SymbolicCOOMatrix(m))
+end
+
+@testset "Promotion1" begin
+    a = symbolic(:a)
+    b = symbolic(:b, Int)
+    x = [a, b]
+    @test typeof(b) <: SymbolicVariable{Int}
+    @test typeof(x[1]) == SymbolicVariable{Float64}
+    @test typeof(x[2]) == SymbolicVariable{Float64}
+end
+
+@testset "Promotion2" begin
+    a = symbolic(:a)
+    x = [a, 1.0]
+    @test typeof(x[1]) == SymbolicVariable{Float64}
+    @test typeof(x[2]) == SymbolicValue{Float64}
+end
+
+@testset "Promotion3" begin
+    a = symbolic(:a)
+    x = [a, 1]
+    @test typeof(x[1]) == SymbolicVariable{Float64}
+    @test typeof(x[2]) == SymbolicValue{Float64}
 end

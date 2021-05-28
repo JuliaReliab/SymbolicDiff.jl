@@ -27,26 +27,6 @@ end
 SymbolicValue(value::Tv) where Tv = SymbolicValue(Set{Symbol}([]), value)
 
 """
-convert
-"""
-
-function Base.convert(::Type{<:AbstractSymbolic}, x::Tv) where {Tv <: Number}
-    SymbolicValue(x)
-end
-
-"""
-iszero
-"""
-
-function Base.iszero(x::AbstractSymbolic)
-    return false
-end
-
-function Base.iszero(x::SymbolicValue{Tv}) where Tv
-    return Base.iszero(x.val)
-end
-
-"""
 SymbolicVariable
 
 A variable to be derivatived
@@ -67,6 +47,50 @@ struct SymbolicExpression{Tv} <: AbstractSymbolic{Tv}
     params::Set{Symbol}
     op::Symbol
     args::Vector{<:AbstractSymbolic}
+end
+
+"""
+convert
+"""
+
+function Base.convert(::Type{SymbolicVariable{T}}, x::SymbolicVariable{S}) where {T<:Number,S<:Number}
+    symbolic(x.var, T)
+end
+
+function Base.convert(::Type{SymbolicValue{T}}, x::SymbolicValue{S}) where {T<:Number,S<:Number}
+    SymbolicValue(T(x.val))
+end
+
+function Base.convert(::Type{<:AbstractSymbolic{T}}, x::S) where {T<:Number,S<:Number}
+    SymbolicValue(T(x))
+end
+
+"""
+promotion
+"""
+
+function Base.promote_rule(::Type{SymbolicVariable{T}}, ::Type{SymbolicVariable{S}}) where {T<:Number,S<:Number}
+    SymbolicVariable{promote_type(T,S)}
+end
+
+function Base.promote_rule(::Type{SymbolicValue{T}}, ::Type{SymbolicValue{S}}) where {T<:Number,S<:Number}
+    SymbolicValue{promote_type(T,S)}
+end
+
+function Base.promote_rule(::Type{<:AbstractSymbolic{T}}, ::Type{S}) where {T<:Number,S<:Number}
+    AbstractSymbolic{promote_type(T,S)}
+end
+
+"""
+iszero
+"""
+
+function Base.iszero(x::AbstractSymbolic)
+    return false
+end
+
+function Base.iszero(x::SymbolicValue{Tv}) where Tv
+    return Base.iszero(x.val)
 end
 
 """
