@@ -35,6 +35,11 @@ A variable to be derivatived
 struct SymbolicVariable{Tv} <: AbstractSymbolic{Tv}
     params::Set{Symbol}
     var::Symbol
+    val::Vector
+end
+
+function Base.:(=>)(v::SymbolicVariable{T}, x::S) where {T,S}
+    v.val[1] = T(x)
 end
 
 """
@@ -46,7 +51,6 @@ An expr
 struct SymbolicExpression{Tv} <: AbstractSymbolic{Tv}
     params::Set{Symbol}
     op::Symbol
-#    args::Vector{<:AbstractSymbolic{Tv}}
     args
 end
 
@@ -55,15 +59,15 @@ convert
 """
 
 function Base.convert(::Type{<:AbstractSymbolic{T}}, x::SymbolicVariable{S}) where {T<:Number,S<:Number}
-    symbolic(x.var, T)
+    SymbolicVariable{T}(x.params, x.var, x.val)
 end
 
 function Base.convert(::Type{<:AbstractSymbolic{T}}, x::SymbolicValue{S}) where {T<:Number,S<:Number}
-    symbolic(T(x.val), T)
+    SymbolicValue{T}(x.params, T(x.val))
 end
 
 function Base.convert(::Type{<:AbstractSymbolic{T}}, x::S) where {T<:Number,S<:Number}
-    symbolic(T(x), T)
+    SymbolicValue{T}(Set([]), T(x))
 end
 
 function Base.convert(::Type{<:AbstractSymbolic{T}}, x::SymbolicExpression{S}) where {T<:Number,S<:Number}
@@ -148,7 +152,7 @@ function symbolic(expr::Expr, ::Type{Tv} = Float64) where Tv
 end
 
 function symbolic(expr::Symbol, ::Type{Tv} = Float64) where Tv
-    SymbolicVariable{Tv}(Set([expr]), expr)
+    SymbolicVariable{Tv}(Set([expr]), expr, [Tv(0)])
 end
 
 function symbolic(expr::Tv, ::Type{Tx}) where {Tv,Tx}
@@ -164,6 +168,28 @@ function symbolic(expr::Nothing, ::Type{Tv}) where Tv
 end
 
 function symbolic(expr::Nothing) where Tv
+    nothing
+end
+
+"""
+assign
+"""
+
+function assign(expr::SymbolicExpression{Tv}, val::Dict{Symbol,<:Number}) where Tv
+    for x = expr.args
+        assign(x, val)
+    end
+    nothing
+end
+
+function assign(expr::SymbolicValue{Tv}, val::Dict{Symbol,<:Number}) where Tv
+    nothing
+end
+
+function assign(expr::SymbolicVariable{Tv}, val::Dict{Symbol,<:Number}) where Tv
+    if haskey(val, expr.var)
+        expr.val[1] = Tv(val[expr.var])
+    end
     nothing
 end
 

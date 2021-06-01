@@ -34,28 +34,28 @@ end
 
 
 """
-symboliceval(f, env, cache)
+symeval(f, cache)
 Return the value for expr f
 """
 
-function symboliceval(vec::Vector{<:AbstractSymbolic{Tv}}, env::SymbolicEnv, cache::SymbolicCache) where Tv
-    Tv[symboliceval(x, env, cache) for x = vec]
+function symeval(vec::Vector{<:AbstractSymbolic{Tv}}, cache::SymbolicCache) where Tv
+    Tv[symeval(x, cache) for x = vec]
 end
 
 """
-symboliceval(f, dvar, env, cache)
+symeval(f, dvar, cache)
 Return the first derivative of expr f with respect to dvar
 """
 
-function symboliceval(vec::Vector{<:AbstractSymbolic{Tv}}, dvar::Symbol, env::SymbolicEnv, cache::SymbolicCache) where Tv
-    Tv[symboliceval(x, dvar, env, cache) for x = vec]
+function symeval(vec::Vector{<:AbstractSymbolic{Tv}}, dvar::Symbol, cache::SymbolicCache) where Tv
+    Tv[symeval(x, dvar, cache) for x = vec]
 end
 
 """
-symboliceval(f, dvar, env, cache)
+symeval(f, dvar, cache)
 Return the second derivative of expr f with respect to dvar1 and dvar2
 """
 
-function symboliceval(vec::Vector{<:AbstractSymbolic{Tv}}, dvar::Tuple{Symbol,Symbol}, env::SymbolicEnv, cache::SymbolicCache) where Tv
-    Tv[symboliceval(x, dvar, env, cache) for x = vec]
+function symeval(vec::Vector{<:AbstractSymbolic{Tv}}, dvar::Tuple{Symbol,Symbol}, cache::SymbolicCache) where Tv
+    Tv[symeval(x, dvar, cache) for x = vec]
 end

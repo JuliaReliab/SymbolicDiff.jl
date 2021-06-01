@@ -1,12 +1,10 @@
 module SymbolicDiff
 
 export AbstractSymbolic, SymbolicVariable, SymbolicValue, SymbolicExpression
-export AbstractSymbolicVectorMatrix, AbstractSymbolicVector
-export SymbolicEnv, SymbolicCache
-export symbolic, AbstractSymbolicMatrix, SymbolicCSRMatrix, SymbolicCSCMatrix, SymbolicCOOMatrix, SymbolicMatrix
+export SymbolicCache
 
-export symbolic, symboliceval
-export @env, @expr
+export symbolic, symeval, assign
+export @expr, @vars
 
 import Base
 import LinearAlgebra: dot
