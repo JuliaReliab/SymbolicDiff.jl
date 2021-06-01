@@ -3,19 +3,31 @@ Module: SymbolicDiff (Symbolic Operation for Arithmetic)
 """
 
 """
-symboliceval(f, (dvar1, dver2), env, cache)
+seval(f, (dvar1, dver2), env, cache)
 Return the second derivative of expr f with respect to dvar1 and dver2
 """
 
-function symboliceval(f::SymbolicValue{Tv}, dvar::Tuple{Symbol,Symbol}, env::SymbolicEnv, cache::SymbolicCache)::Tv where Tv
+function seval(f, dvar::Tuple{Symbol,Symbol})
+    seval(f, dvar, globalenv, SymbolicCache())
+end
+
+function seval(f, dvar::Tuple{Symbol,Symbol}, env::SymbolicEnv)
+    seval(f, dvar, env, SymbolicCache())
+end
+
+function seval(f, dvar::Tuple{Symbol,Symbol}, cache::SymbolicCache)
+    seval(f, dvar, globalenv, cache)
+end
+
+function seval(f::SymbolicValue{Tv}, dvar::Tuple{Symbol,Symbol}, env::SymbolicEnv, cache::SymbolicCache)::Tv where Tv
     0
 end
 
-function symboliceval(f::SymbolicVariable{Tv}, dvar::Tuple{Symbol,Symbol}, env::SymbolicEnv, cache::SymbolicCache)::Tv where Tv
+function seval(f::SymbolicVariable{Tv}, dvar::Tuple{Symbol,Symbol}, env::SymbolicEnv, cache::SymbolicCache)::Tv where Tv
     0
 end
 
-function symboliceval(f::AbstractSymbolic{Tv}, dvar::Tuple{Symbol,Symbol}, env::SymbolicEnv, cache::SymbolicCache) where Tv
+function seval(f::AbstractSymbolic{Tv}, dvar::Tuple{Symbol,Symbol}, env::SymbolicEnv, cache::SymbolicCache) where Tv
     (dvar[1] in f.params) || (dvar[2] in f.params) || return 0
     get(cache, (f,dvar)) do
         retval = _eval(Val(f.op), f, dvar, env, cache)
@@ -30,20 +42,20 @@ Dispached function to evaluate the second derivative of f
 """
 
 function _eval(::Val{:+}, f::SymbolicExpression{Tv}, dvar::Tuple{Symbol,Symbol}, env::SymbolicEnv, cache::SymbolicCache)::Tv where Tv
-    args = [symboliceval(x, dvar, env, cache) for x = f.args]
+    args = [seval(x, dvar, env, cache) for x = f.args]
     +(args...)
 end
 
 function _eval(::Val{:-}, f::SymbolicExpression{Tv}, dvar::Tuple{Symbol,Symbol}, env::SymbolicEnv, cache::SymbolicCache)::Tv where Tv
-    args = [symboliceval(x, dvar, env, cache) for x = f.args]
+    args = [seval(x, dvar, env, cache) for x = f.args]
     -(args...)
 end
 
 function _eval(::Val{:*}, f::SymbolicExpression{Tv}, dvar::Tuple{Symbol,Symbol}, env::SymbolicEnv, cache::SymbolicCache)::Tv where Tv
-    args = [symboliceval(x, env, cache) for x = f.args]
-    dargs_a = [symboliceval(x, dvar[1], env, cache) for x = f.args]
-    dargs_b = [symboliceval(x, dvar[2], env, cache) for x = f.args]
-    dargs_ab = [symboliceval(x, dvar, env, cache) for x = f.args]
+    args = [seval(x, env, cache) for x = f.args]
+    dargs_a = [seval(x, dvar[1], env, cache) for x = f.args]
+    dargs_b = [seval(x, dvar[2], env, cache) for x = f.args]
+    dargs_ab = [seval(x, dvar, env, cache) for x = f.args]
 
     ret = dargs_ab[1]
     s = args[1]
@@ -65,18 +77,18 @@ function _eval(::Val{:*}, f::SymbolicExpression{Tv}, dvar::Tuple{Symbol,Symbol},
 end
 
 function _eval(::Val{:/}, f::SymbolicExpression{Tv}, dvar::Tuple{Symbol,Symbol}, env::SymbolicEnv, cache::SymbolicCache)::Tv where Tv
-    x,y = [symboliceval(x, env, cache) for x = f.args]
-    dx_a,dy_a = [symboliceval(x, dvar[1], env, cache) for x = f.args]
-    dx_b,dy_b = [symboliceval(x, dvar[2], env, cache) for x = f.args]
-    dx_ab,dy_ab = [symboliceval(x, dvar, env, cache) for x = f.args]
+    x,y = [seval(x, env, cache) for x = f.args]
+    dx_a,dy_a = [seval(x, dvar[1], env, cache) for x = f.args]
+    dx_b,dy_b = [seval(x, dvar[2], env, cache) for x = f.args]
+    dx_ab,dy_ab = [seval(x, dvar, env, cache) for x = f.args]
     ((dx_ab * y - dx_a * dy_b  - dx_b * dy_a - x * dy_ab) * y + 2 * x * dy_a * dy_b) / y^3
 end
 
 function _eval(::Val{:^}, f::SymbolicExpression{Tv}, dvar::Tuple{Symbol,Symbol}, env::SymbolicEnv, cache::SymbolicCache)::Tv where Tv
-    x,y = [symboliceval(x, env, cache) for x = f.args]
-    dx_a,dy_a = [symboliceval(x, dvar[1], env, cache) for x = f.args]
-    dx_b,dy_b = [symboliceval(x, dvar[2], env, cache) for x = f.args]
-    dx_ab,dy_ab = [symboliceval(x, dvar, env, cache) for x = f.args]
+    x,y = [seval(x, env, cache) for x = f.args]
+    dx_a,dy_a = [seval(x, dvar[1], env, cache) for x = f.args]
+    dx_b,dy_b = [seval(x, dvar[2], env, cache) for x = f.args]
+    dx_ab,dy_ab = [seval(x, dvar, env, cache) for x = f.args]
     f = x^y
     f_a = f * (dy_a * x * log(x) + y * dx_a) / x
     f_b = f * (dy_b * x * log(x) + y * dx_b) / x
@@ -85,33 +97,33 @@ function _eval(::Val{:^}, f::SymbolicExpression{Tv}, dvar::Tuple{Symbol,Symbol},
 end
 
 function _eval(::Val{:exp}, f::SymbolicExpression{Tv}, dvar::Tuple{Symbol,Symbol}, env::SymbolicEnv, cache::SymbolicCache)::Tv where Tv
-    x, = [symboliceval(x, env, cache) for x = f.args]
-    dx_a, = [symboliceval(x, dvar[1], env, cache) for x = f.args]
-    dx_b, = [symboliceval(x, dvar[2], env, cache) for x = f.args]
-    dx_ab, = [symboliceval(x, dvar, env, cache) for x = f.args]
+    x, = [seval(x, env, cache) for x = f.args]
+    dx_a, = [seval(x, dvar[1], env, cache) for x = f.args]
+    dx_b, = [seval(x, dvar[2], env, cache) for x = f.args]
+    dx_ab, = [seval(x, dvar, env, cache) for x = f.args]
     exp(x) * (dx_b * dx_a + dx_ab)
 end
 
 function _eval(::Val{:log}, f::SymbolicExpression{Tv}, dvar::Tuple{Symbol,Symbol}, env::SymbolicEnv, cache::SymbolicCache)::Tv where Tv
-    x, = [symboliceval(x, env, cache) for x = f.args]
-    dx_a, = [symboliceval(x, dvar[1], env, cache) for x = f.args]
-    dx_b, = [symboliceval(x, dvar[2], env, cache) for x = f.args]
-    dx_ab, = [symboliceval(x, dvar, env, cache) for x = f.args]
+    x, = [seval(x, env, cache) for x = f.args]
+    dx_a, = [seval(x, dvar[1], env, cache) for x = f.args]
+    dx_b, = [seval(x, dvar[2], env, cache) for x = f.args]
+    dx_ab, = [seval(x, dvar, env, cache) for x = f.args]
     (dx_ab * x - dx_a * dx_b) / x^2
 end
 
 function _eval(::Val{:sqrt}, f::SymbolicExpression{Tv}, dvar::Tuple{Symbol,Symbol}, env::SymbolicEnv, cache::SymbolicCache)::Tv where Tv
-    x, = [symboliceval(x, env, cache) for x = f.args]
-    dx_a, = [symboliceval(x, dvar[1], env, cache) for x = f.args]
-    dx_b, = [symboliceval(x, dvar[2], env, cache) for x = f.args]
-    dx_ab, = [symboliceval(x, dvar, env, cache) for x = f.args]
+    x, = [seval(x, env, cache) for x = f.args]
+    dx_a, = [seval(x, dvar[1], env, cache) for x = f.args]
+    dx_b, = [seval(x, dvar[2], env, cache) for x = f.args]
+    dx_ab, = [seval(x, dvar, env, cache) for x = f.args]
     sqrt(x) * (dx_ab * 2 - dx_a * dx_b) / (4*x)
 end
 
 function _eval(::Val{:dot}, f::SymbolicExpression{Tv}, dvar::Tuple{Symbol,Symbol}, env::SymbolicEnv, cache::SymbolicCache)::Tv where Tv
-    x,y = [symboliceval(x, env, cache) for x = f.args]
-    dx_a,dy_a = [symboliceval(x, dvar[1], env, cache) for x = f.args]
-    dx_b,dy_b = [symboliceval(x, dvar[2], env, cache) for x = f.args]
-    dx_ab,dy_ab = [symboliceval(x, dvar, env, cache) for x = f.args]
+    x,y = [seval(x, env, cache) for x = f.args]
+    dx_a,dy_a = [seval(x, dvar[1], env, cache) for x = f.args]
+    dx_b,dy_b = [seval(x, dvar[2], env, cache) for x = f.args]
+    dx_ab,dy_ab = [seval(x, dvar, env, cache) for x = f.args]
     dot(x,dy_ab) + dot(dx_b,dy_a) + dot(dx_a,dy_b) + dot(dx_ab,y)
 end

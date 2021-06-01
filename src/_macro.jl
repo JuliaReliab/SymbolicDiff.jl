@@ -2,44 +2,66 @@
 Module: SymbolicDiff (Symbolic Operation for Arithmetic)
 """
 
+"""
+@vars(parms...)
+
+generate symbolic variables
+
+Example:
+@vars x y
+"""
+
+macro vars(params...)
+    body = [Expr(:(=), esc(x), esc(Expr(:call, :symbolic, Expr(:quote, x)))) for x = params]
+    push!(body, Expr(:tuple, [esc(x) for x = params]...))
+    Expr(:block, body...)
+end
 
 """
-@env(envname, block)
+@bind(envname, block)
 
 Set parameter values in the block to the environment
 
 Example:
-@env env1 begin
+@bind env1 x => 1.0
+
+@bind env1 begin
     x = 1.0
     y = 2.0
 end
 """
 
-macro env(envname, block)
-    body = []
-    push!(body, :($(envname) = SymbolicEnv()))
-    for x = block.args
-        _parameter(x, envname, body)
+macro bind(x...)
+    if length(x) == 1
+        envname = :globalenv
+        arg = x[1]
+    elseif length(x) == 2
+        envname = x[1]
+        arg = x[2]
+    else
+        throw(ErrorException("@bind should take 1 or 2 arguments"))
     end
-    esc(Expr(:block, body...))
+
+    if Meta.isexpr(arg, :block)
+        body = [_parameter(x, envname) for x = arg.args]
+        esc(Expr(:block, body...))
+    else
+        esc(_parameter(arg, envname))
+    end
 end
 
-function _parameter(x::Any, envname, body)
+function _parameter(x::Any, envname)
     x
 end
 
-function _parameter(x::Expr, envname, body)
-    if Meta.isexpr(x, :(=))
-        var = x.args[1]
-        val = x.args[2]
-        push!(body, :($(envname)[$(Expr(:quote, var))] = $(val)))
+function _parameter(x::Expr, envname)
+    if Meta.isexpr(x, :call) && x.args[1] == :(=>)
+        var = x.args[2]
+        val = x.args[3]
+        :($(envname)[$var] = $(val))
+    else
+        throw(ErrorException("invalid expression for @bind."))
     end
-end
-
-function _parameter(x::Symbol, envname, body)
-    push!(body, _defparam(x))
-    var = x
-    push!(body, :(get($(envname), $(var), 0.0)))
 end
 
 """
