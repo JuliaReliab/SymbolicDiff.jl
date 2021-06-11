@@ -95,6 +95,11 @@ function _eval(::Val{:sqrt}, f::SymbolicExpression{Tv}, dvar::Symbol, env::Symbo
     dx /(2 * sqrt(x))
 end
 
+function _eval(::Val{:sum}, f::SymbolicExpression{Tv}, dvar::Symbol, env::SymbolicEnv, cache::SymbolicCache)::Tv where Tv
+    dx, = [seval(x, dvar, env, cache) for x = f.args]
+    sum(dx)
+end
+
 function _eval(::Val{:dot}, f::SymbolicExpression{Tv}, dvar::Symbol, env::SymbolicEnv, cache::SymbolicCache)::Tv where Tv
     x,y = [seval(x, env, cache) for x = f.args]
     dx,dy = [seval(x, dvar, env, cache) for x = f.args]

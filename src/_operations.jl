@@ -40,6 +40,11 @@ function Base.sqrt(x::AbstractSymbolic{Tv}) where Tv
     SymbolicExpression{Tv}(x.params, :sqrt, [x])
 end
 
+function sum(x::Vector{<:AbstractSymbolic{T}}) where {T<:Number}
+    s = union([u.params for u = x]...)
+    SymbolicExpression{Tv}(s, :sum, [x])
+end
+
 function dot(x::Vector{<:AbstractSymbolic{Tx}}, y::Vector{<:AbstractSymbolic{Ty}}) where {Tx<:Number,Ty<:Number}
     Tv = promote_type(Tx,Ty)
     s = union([u.params for u = x]..., [u.params for u = y]...)

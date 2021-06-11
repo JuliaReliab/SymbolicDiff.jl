@@ -24,9 +24,7 @@ function seval(f::SymbolicValue{Tv}, env::SymbolicEnv, cache::SymbolicCache)::Tv
 end
 
 function seval(f::SymbolicVariable{Tv}, env::SymbolicEnv, cache::SymbolicCache)::Tv where Tv
-    get(env, f.var) do
-        0
-    end
+    env[f.var]
 end
 
 function seval(f::AbstractSymbolic{Tv}, env::SymbolicEnv, cache::SymbolicCache) where Tv
@@ -81,6 +79,11 @@ end
 function _eval(::Val{:sqrt}, f::SymbolicExpression{Tv}, env::SymbolicEnv, cache::SymbolicCache)::Tv where Tv
     x, = [seval(x, env, cache) for x = f.args]
     sqrt(x)
+end
+
+function _eval(::Val{:sum}, f::SymbolicExpression{Tv}, env::SymbolicEnv, cache::SymbolicCache)::Tv where Tv
+    x, = [seval(x, env, cache) for x = f.args]
+    sum(x)
 end
 
 function _eval(::Val{:dot}, f::SymbolicExpression{Tv}, env::SymbolicEnv, cache::SymbolicCache)::Tv where Tv

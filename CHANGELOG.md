@@ -1,3 +1,8 @@
+# 0.8.1
+
+- add operation sum for vector
+- Throw error when the eval access the variable that is not binded
+
 # 0.8.0
 
 - Change macro style

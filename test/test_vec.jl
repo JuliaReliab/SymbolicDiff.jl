@@ -88,6 +88,27 @@ end
     @test m[3].val == 3
 end
 
+@testset "SymbolicVec4" begin
+    test = SymbolicEnv()
+    m = @expr [1, x, y]
+    @bind test :x => 10
+    @bind test :y => 20
+    result = seval(m[1:2], test)
+    @test result == [1, 10]
+end
+
+@testset "SymbolicVec4" begin
+    test = SymbolicEnv()
+    m = @expr [1, x, y]
+    expr = sum(m)
+    @bind test :x => 10
+    @bind test :y => 20
+    result = seval(expr, test)
+    @test result == 31.0
+    result = seval(expr, :x, test)
+    @test result == 1.0
+end
+
 @testset "SymbolicMat3" begin
     m = @expr [1 x 3; 3 4 y]
     @test m[1,1].val == 1
