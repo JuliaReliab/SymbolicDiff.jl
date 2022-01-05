@@ -1,3 +1,7 @@
+# 0.8.2
+
+- add block expr for @vars
+
 # 0.8.1
 
 - add operation sum for vector

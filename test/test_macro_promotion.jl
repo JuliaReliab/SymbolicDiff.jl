@@ -52,3 +52,42 @@ end
     println(x)
     @test typeof(x) == SymbolicExpression{Float64}
 end
+
+@testset "Var1" begin
+    @vars x y
+    z = x + y
+    @bind begin
+        :x => 0.8
+        :y => 0.9
+    end
+    result = seval(z)
+    @test result == 0.8 + 0.9
+end
+
+@testset "Var2" begin
+    @vars begin
+        x
+        y
+    end
+    z = x + y
+    @bind begin
+        :x => 0.8
+        :y => 0.9
+    end
+    result = seval(z)
+    @test result == 0.8 + 0.9
+end
+
+@testset "Var3" begin
+    @vars begin
+        x
+        y
+    end
+    z = x + y
+    @bind begin
+        :x => 0.8
+        :y => 0.9
+    end
+    result = seval(z, :x)
+    @test result == 1.0
+end

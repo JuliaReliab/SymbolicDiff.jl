@@ -12,8 +12,22 @@ Example:
 """
 
 macro vars(params...)
-    body = [Expr(:(=), esc(x), esc(Expr(:call, :symbolic, Expr(:quote, x)))) for x = params]
-    push!(body, Expr(:tuple, [esc(x) for x = params]...))
+    if length(params) == 1 && Meta.isexpr(params[1], :block)
+        args = params[1].args
+    else
+        args = params
+    end
+    body = []
+    xargs = []
+    for x = args
+        if typeof(x) == Symbol
+            push!(body, Expr(:(=), esc(x), esc(Expr(:call, :symbolic, Expr(:quote, x)))))
+            push!(xargs, esc(x))
+        else
+            push!(body, x)
+        end
+    end
+    push!(body, Expr(:tuple, [x for x = xargs]...))
     Expr(:block, body...)
 end
 
