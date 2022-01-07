@@ -262,3 +262,16 @@ end
     expected = seval(m, test2)
     @test isapprox(expected, result)
 end
+
+@testset "SymbolicDot5" begin
+    @bind begin
+        x = 4
+        y = 3
+    end
+    v1 = [x, y]
+    v2 = [x, 8]
+    println(seval(dot(v1, v2)))
+    println(seval(dot(v1, v2), :x))
+    println(seval(dot(v1, v2), :y))
+    println(seval(dot(v1, v2), (:x,:y)))
+end
