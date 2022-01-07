@@ -1,6 +1,6 @@
 module SymbolicDiff
 
-export AbstractSymbolic, SymbolicVariable, SymbolicValue, SymbolicExpression
+export AbstractSymbolic, AbstractVectorSymbolic, SymbolicVariable, SymbolicValue, SymbolicExpression
 export SymbolicEnv, SymbolicCache
 export symbolic, seval
 export @vars, @bind, @expr
