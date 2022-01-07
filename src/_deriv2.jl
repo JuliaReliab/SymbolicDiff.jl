@@ -154,7 +154,6 @@ function _eval(::Val{:sum}, f::SymbolicExpression{Tv}, dvar::Tuple{Symbol,Symbol
 end
 
 function _eval(::Val{:dot}, f::SymbolicExpression{Tv}, dvar::Tuple{Symbol,Symbol}, env::SymbolicEnv, cache::SymbolicCache)::Tv where Tv
-    println(f.args)
     x,y = [seval(x, env, cache) for x = f.args]
     dx_a,dy_a = [seval(x, dvar[1], env, cache) for x = f.args]
     dx_b,dy_b = [seval(x, dvar[2], env, cache) for x = f.args]

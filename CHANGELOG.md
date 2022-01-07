@@ -1,3 +1,7 @@
+# 0.9.1
+
+- add AbstractVectorSymbolic to return zero vector
+
 # 0.9.0
 
 - change the style of @bind
