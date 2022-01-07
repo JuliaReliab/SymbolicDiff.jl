@@ -13,6 +13,8 @@ AbstractSymbolic has the filed
 
 abstract type AbstractSymbolic{Tv} end
 
+abstract type AbstractVectorSymbolic{Tv} <: AbstractSymbolic{Tv} end
+
 """
 SymbolicValue
 

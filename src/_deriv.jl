@@ -55,6 +55,14 @@ function seval(f::AbstractSymbolic{Tv}, dvar::Symbol, env::SymbolicEnv, cache::S
     end
 end
 
+function seval(f::AbstractVectorSymbolic{Tv}, dvar::Symbol, env::SymbolicEnv, cache::SymbolicCache) where Tv
+    (dvar in f.params) || return zeros(Tv, f.dim)
+    get(cache, (f,dvar)) do
+        retval = _eval(Val(f.op), f, dvar, env, cache)
+        cache[(f,dvar)] = retval
+    end
+end
+
 """
 _eval(::Val{xx}, dvar, f, env, cache)
 
