@@ -19,6 +19,26 @@ function seval(f, dvar::Tuple{Symbol,Symbol}, cache::SymbolicCache)
     seval(f, dvar, globalenv, cache)
 end
 
+###
+
+function seval(f, dvar::Tuple{SymbolicVariable{Tv},SymbolicVariable{Tv}}) where Tv
+    seval(f, (dvar[1].var, dvar[2].var))
+end
+
+function seval(f, dvar::Tuple{SymbolicVariable{Tv},SymbolicVariable{Tv}}, env::SymbolicEnv) where Tv
+    seval(f, (dvar[1].var, dvar[2].var), env)
+end
+
+function seval(f, dvar::Tuple{SymbolicVariable{Tv},SymbolicVariable{Tv}}, cache::SymbolicCache) where Tv
+    seval(f, (dvar[1].var, dvar[2].var), cache)
+end
+
+function seval(f, dvar::Tuple{SymbolicVariable{Tv},SymbolicVariable{Tv}}, env::SymbolicEnv, cache::SymbolicCache) where Tv
+        seval(f, (dvar[1].var, dvar[2].var), env, cache)
+end
+
+###
+
 function seval(f::SymbolicValue{Tv}, dvar::Tuple{Symbol,Symbol}, env::SymbolicEnv, cache::SymbolicCache)::Tv where Tv
     0
 end

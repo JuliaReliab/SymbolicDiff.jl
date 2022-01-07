@@ -105,24 +105,21 @@ end
 @testset "lam1" begin
     env = SymbolicEnv()
     cache = SymbolicCache()
-    t = rand()
-    lam1 = rand()
-    lam2 = rand()
     @bind env begin
-        :t => t
-        :lam1 => lam1
-        :lam2 => lam2
+        t = rand()
+        lam1 = rand()
+        lam2 = rand()
     end
-    expr = @expr exp(-lam1*t) - (lam1/lam2) * exp(-lam1*t) * (exp(-lam2*t) - 1)
-    res1 = seval(expr, :lam1, env, cache)
-    @test res1 ≈ -t*exp(-lam1*t) - (1/lam2)*exp(-lam1*t)*(exp(-lam2*t)-1) + t*(lam1/lam2)*exp(-lam1*t)*(exp(-lam2*t)-1)
-    res2 = seval(expr, :lam2, env, cache)
-    @test res2 ≈ (lam1/lam2^2)*exp(-lam1*t)*(exp(-lam2*t)-1) + t*(lam1/lam2)*exp(-lam1*t)*exp(-lam2*t)
-    res3 = seval(expr, (:lam2,:lam1), env, cache)
+    expr = exp(-lam1*t) - (lam1/lam2) * exp(-lam1*t) * (exp(-lam2*t) - 1)
+    res1 = seval(expr, lam1, env, cache)
+    @test res1 ≈ seval(-t*exp(-lam1*t) - (1/lam2)*exp(-lam1*t)*(exp(-lam2*t)-1) + t*(lam1/lam2)*exp(-lam1*t)*(exp(-lam2*t)-1), env)
+    res2 = seval(expr, lam2, env, cache)
+    @test res2 ≈ seval((lam1/lam2^2)*exp(-lam1*t)*(exp(-lam2*t)-1) + t*(lam1/lam2)*exp(-lam1*t)*exp(-lam2*t), env)
+    res3 = seval(expr, (lam2,lam1), env, cache)
     res4 = seval(expr, (:lam1,:lam2), env, cache)
     @test isapprox(res3, res4)
-    @test isapprox((1/lam2^2)*exp(-lam1*t)*(exp(-lam2*t)-1) - t*(lam1/lam2^2)*exp(-lam1*t)*(exp(-lam2*t)-1) + t*(1/lam2)*exp(-lam1*t)*exp(-lam2*t) - t^2*(lam1/lam2)*exp(-lam1*t)*exp(-lam2*t),
-                    (1/lam2^2)*exp(-lam1*t)*(exp(-lam2*t)-1) + t*(1/lam2)*exp(-lam1*t)*exp(-lam2*t) - t*(lam1/lam2^2)*exp(-lam1*t)*(exp(-lam2*t)-1) - t^2*(lam1/lam2)*exp(-lam1*t)*exp(-lam2*t))
-    @test res3 ≈ (1/lam2^2)*exp(-lam1*t)*(exp(-lam2*t)-1) - t*(lam1/lam2^2)*exp(-lam1*t)*(exp(-lam2*t)-1) + t*(1/lam2)*exp(-lam1*t)*exp(-lam2*t) - t^2*(lam1/lam2)*exp(-lam1*t)*exp(-lam2*t)
-    @test res4 ≈ (1/lam2^2)*exp(-lam1*t)*(exp(-lam2*t)-1) + t*(1/lam2)*exp(-lam1*t)*exp(-lam2*t) - t*(lam1/lam2^2)*exp(-lam1*t)*(exp(-lam2*t)-1) - t^2*(lam1/lam2)*exp(-lam1*t)*exp(-lam2*t)
+    @test isapprox(seval((1/lam2^2)*exp(-lam1*t)*(exp(-lam2*t)-1) - t*(lam1/lam2^2)*exp(-lam1*t)*(exp(-lam2*t)-1) + t*(1/lam2)*exp(-lam1*t)*exp(-lam2*t) - t^2*(lam1/lam2)*exp(-lam1*t)*exp(-lam2*t), env),
+                    seval((1/lam2^2)*exp(-lam1*t)*(exp(-lam2*t)-1) + t*(1/lam2)*exp(-lam1*t)*exp(-lam2*t) - t*(lam1/lam2^2)*exp(-lam1*t)*(exp(-lam2*t)-1) - t^2*(lam1/lam2)*exp(-lam1*t)*exp(-lam2*t), env))
+    @test res3 ≈ seval((1/lam2^2)*exp(-lam1*t)*(exp(-lam2*t)-1) - t*(lam1/lam2^2)*exp(-lam1*t)*(exp(-lam2*t)-1) + t*(1/lam2)*exp(-lam1*t)*exp(-lam2*t) - t^2*(lam1/lam2)*exp(-lam1*t)*exp(-lam2*t), env)
+    @test res4 ≈ seval((1/lam2^2)*exp(-lam1*t)*(exp(-lam2*t)-1) + t*(1/lam2)*exp(-lam1*t)*exp(-lam2*t) - t*(lam1/lam2^2)*exp(-lam1*t)*(exp(-lam2*t)-1) - t^2*(lam1/lam2)*exp(-lam1*t)*exp(-lam2*t), env)
 end

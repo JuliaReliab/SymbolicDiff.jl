@@ -19,6 +19,26 @@ function seval(f, dvar::Symbol, cache::SymbolicCache)
     seval(f, dvar, globalenv, cache)
 end
 
+###
+
+function seval(f, dvar::SymbolicVariable{Tv}) where Tv
+    seval(f, dvar.var)
+end
+
+function seval(f, dvar::SymbolicVariable{Tv}, env::SymbolicEnv) where Tv
+    seval(f, dvar.var, env)
+end
+
+function seval(f, dvar::SymbolicVariable{Tv}, cache::SymbolicCache) where Tv
+    seval(f, dvar.var, cache)
+end
+
+function seval(f, dvar::SymbolicVariable{Tv}, env::SymbolicEnv, cache::SymbolicCache) where Tv
+    seval(f, dvar.var, env, cache)
+end
+
+###
+
 function seval(f::SymbolicValue{Tv}, dvar::Symbol, env::SymbolicEnv, cache::SymbolicCache)::Tv where Tv
     Tv(0)
 end

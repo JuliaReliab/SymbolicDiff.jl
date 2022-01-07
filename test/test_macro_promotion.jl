@@ -1,27 +1,24 @@
 @testset "Macro1" begin
-    x = 5.6
-    y = 10.1
-    @bind :x => x
-    @bind :y => y
-    expr = @expr x^2 + 10*x*y + 4*y^2
-    res = seval(expr, (:x,:y))
+    @bind begin
+        x = 5.6
+        y = 10.1
+    end
+    expr = x^2 + 10*x*y + 4*y^2
+    res = seval(expr, (x,y))
     @test res == 10.0
 end
 
 @testset "ops1" begin
     env = SymbolicEnv()
     cache = SymbolicCache()
-    x = 0.56
-    y = 0.101
     @bind env begin
-        :x => x
-        :y => y
+        x = 0.56
+        y = 0.101
     end
-    expr = @expr exp(x^2 + 10*x*y + 4*y^2)
-    res = seval(expr, (:x,:y), env, cache)
-    @test res == exp(x^2 + 10*x*y + 4*y^2) * (10*x + 8*y) * (2*x + 10*y) + exp(x^2 + 10*x*y + 4*y^2) * 10
+    expr = exp(x^2 + 10*x*y + 4*y^2)
+    res = seval(expr, (x,y), env, cache)
+    @test res == seval(exp(x^2 + 10*x*y + 4*y^2) * (10*x + 8*y) * (2*x + 10*y) + exp(x^2 + 10*x*y + 4*y^2) * 10, env)
 end
-
 
 @testset "Promotion1" begin
     a = symbolic(:a)
@@ -54,40 +51,21 @@ end
 end
 
 @testset "Var1" begin
-    @vars x y
-    z = x + y
     @bind begin
-        :x => 0.8
-        :y => 0.9
-    end
-    result = seval(z)
-    @test result == 0.8 + 0.9
-end
-
-@testset "Var2" begin
-    @vars begin
-        x
-        y
+        x = 0.8
+        y = 0.9
     end
     z = x + y
-    @bind begin
-        :x => 0.8
-        :y => 0.9
-    end
     result = seval(z)
     @test result == 0.8 + 0.9
 end
 
 @testset "Var3" begin
-    @vars begin
-        x
-        y
+    @bind begin
+        x = 0.8
+        y = 0.9
     end
     z = x + y
-    @bind begin
-        :x => 0.8
-        :y => 0.9
-    end
-    result = seval(z, :x)
+    result = seval(z, x)
     @test result == 1.0
 end

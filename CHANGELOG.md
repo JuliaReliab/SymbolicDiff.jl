@@ -1,3 +1,8 @@
+# 0.9.0
+
+- change the style of @bind
+- @vars is obsoluted
+
 # 0.8.2
 
 - add block expr for @vars

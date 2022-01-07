@@ -6,79 +6,70 @@
 end
 
 @testset "SymbolicVector1" begin
-    v = [@expr x + $i for i = 1:10]
-    x = 10
-    @bind :x => x
-    @test seval(v) == [x+i for i = 1:10]
+    @bind x = 10
+    v = [x + i for i = 1:10]
+    @test seval(v) == [seval(x)+i for i = 1:10]
 end
 
 @testset "SymbolicVector1" begin
-    v = [@expr x^$i + $i for i = 1:10]
-    x = 10
-    @bind :x => x
-    @test seval(v, :x) == [i * x^(i-1) for i = 1:10]
+    @bind x = 10
+    v = [x^i + i for i = 1:10]
+    @test seval(v, :x) == [i * seval(x)^(i-1) for i = 1:10]
 end
 
 @testset "SymbolicCSR1" begin
-    v = [@expr x^$i + $i for i = 1:9]
+    @bind x = 10
+    v = [x^i + i for i = 1:9]
     m = SparseCSR(3, 3, v, [1, 4, 7, 10], [1, 2, 3, 1, 2, 3, 1, 2, 3])
-    x = 10
-    @bind :x => x
-    @test seval(m) == SparseCSR(3, 3, [x^i + i for i = 1:10], [1, 4, 7, 10], [1, 2, 3, 1, 2, 3, 1, 2, 3])
+    @test seval(m) == SparseCSR(3, 3, [seval(x)^i + i for i = 1:10], [1, 4, 7, 10], [1, 2, 3, 1, 2, 3, 1, 2, 3])
 end
 
 @testset "SymbolicCSR2" begin
-    v = [@expr x^$i + $i for i = 1:9]
+    @bind x = 10
+    v = [x^i + i for i = 1:9]
     m = SparseCSR(3, 3, v, [1, 4, 7, 10], [1, 2, 3, 1, 2, 3, 1, 2, 3])
-    x = 10
-    @bind :x => x
-    @test seval(m, :x) == SparseCSR(3, 3, [i * x^(i-1) for i = 1:10], [1, 4, 7, 10], [1, 2, 3, 1, 2, 3, 1, 2, 3])
+    @test seval(m, :x) == SparseCSR(3, 3, [i * seval(x)^(i-1) for i = 1:10], [1, 4, 7, 10], [1, 2, 3, 1, 2, 3, 1, 2, 3])
 end
 
 @testset "SymbolicCSC1" begin
-    v = [@expr x^$i + $i for i = 1:9]
+    @bind x = 10
+    v = [x^i + i for i = 1:9]
     m = SparseCSC(3, 3, v, [1, 4, 7, 10], [1, 2, 3, 1, 2, 3, 1, 2, 3])
-    x = 10
-    @bind :x => x
-    @test seval(m) == SparseCSC(3, 3, [x^i + i for i = 1:10], [1, 4, 7, 10], [1, 2, 3, 1, 2, 3, 1, 2, 3])
+    @test seval(m) == SparseCSC(3, 3, [seval(x)^i + i for i = 1:10], [1, 4, 7, 10], [1, 2, 3, 1, 2, 3, 1, 2, 3])
 end
 
 @testset "SymbolicCSC2" begin
-    v = [@expr x^$i + $i for i = 1:9]
+    @bind x = 10
+    v = [x^i + i for i = 1:9]
     m = SparseCSC(3, 3, v, [1, 4, 7, 10], [1, 2, 3, 1, 2, 3, 1, 2, 3])
-    x = 10
-    @bind :x => x
-    @test seval(m, :x) == SparseCSC(3, 3, [i * x^(i-1) for i = 1:10], [1, 4, 7, 10], [1, 2, 3, 1, 2, 3, 1, 2, 3])
+    @test seval(m, :x) == SparseCSC(3, 3, [i * seval(x)^(i-1) for i = 1:10], [1, 4, 7, 10], [1, 2, 3, 1, 2, 3, 1, 2, 3])
 end
 
 @testset "SymbolicCOO1" begin
-    v = [@expr x^$i + $i for i = 1:9]
+    @bind x = 10
+    v = [x^i + i for i = 1:9]
     m = SparseCOO(3, 3, v, [1, 1, 1, 2, 2, 2, 3, 3, 3], [1, 2, 3, 1, 2, 3, 1, 2, 3])
-    x = 10
-    @bind :x => x
-    @test seval(m) == SparseCOO(3, 3, [x^i + i for i = 1:10], [1, 1, 1, 2, 2, 2, 3, 3, 3], [1, 2, 3, 1, 2, 3, 1, 2, 3])
+    @test seval(m) == SparseCOO(3, 3, [seval(x)^i + i for i = 1:10], [1, 1, 1, 2, 2, 2, 3, 3, 3], [1, 2, 3, 1, 2, 3, 1, 2, 3])
 end
 
 @testset "SymbolicCOO2" begin
-    v = [@expr x^$i + $i for i = 1:9]
+    @bind x = 10
+    v = [x^i + i for i = 1:9]
     m = SparseCOO(3, 3, v, [1, 1, 1, 2, 2, 2, 3, 3, 3], [1, 2, 3, 1, 2, 3, 1, 2, 3])
-    x = 10
-    @bind :x => x
-    @test seval(m, :x) == SparseCOO(3, 3, [i * x^(i-1) for i = 1:10], [1, 1, 1, 2, 2, 2, 3, 3, 3], [1, 2, 3, 1, 2, 3, 1, 2, 3])
+    @test seval(m, :x) == SparseCOO(3, 3, [i * seval(x)^(i-1) for i = 1:10], [1, 1, 1, 2, 2, 2, 3, 3, 3], [1, 2, 3, 1, 2, 3, 1, 2, 3])
 end
 
 @testset "SymbolicMat1" begin
-    m = [@expr x^$i + $i for i = 1:3, j = 1:3]
-    x = 10
-    @bind :x => x
-    @test seval(m) == [x^i + i for i = 1:3, j = 1:3]
+    @bind x = 10
+    m = [x^i + i for i = 1:3, j = 1:3]
+    result = seval(m)
+    @test result == [seval(x)^i + i for i = 1:3, j = 1:3]
 end
 
 @testset "SymbolicMat2" begin
-    m = [@expr x^$i + $i for i = 1:3, j = 1:3]
-    x = 10
-    @bind :x => x
-    @test seval(m, :x) == [i*x^(i-1) for i = 1:3, j = 1:3]
+    @bind x = 10
+    m = [x^i + i for i = 1:3, j = 1:3]
+    @test seval(m, :x) == [i*seval(x)^(i-1) for i = 1:3, j = 1:3]
 end
 
 @testset "SymbolicVec3" begin
@@ -91,8 +82,8 @@ end
 @testset "SymbolicVec4" begin
     test = SymbolicEnv()
     m = @expr [1, x, y]
-    @bind test :x => 10
-    @bind test :y => 20
+    @bind test x = 10
+    @bind test y = 20
     result = seval(m[1:2], test)
     @test result == [1, 10]
 end
@@ -101,8 +92,8 @@ end
     test = SymbolicEnv()
     m = @expr [1, x, y]
     expr = sum(m)
-    @bind test :x => 10
-    @bind test :y => 20
+    @bind test x = 10
+    @bind test y = 20
     result = seval(expr, test)
     @test result == 31.0
     result = seval(expr, :x, test)
@@ -126,9 +117,9 @@ end
     expr = dot(e1, e2)
     x = 0.5
     y = 0.8
-    @bind test :x => x
-    @bind test :y => y
-    @test seval(expr, test, SymbolicCache()) == dot([x^2, y, 10], [x^2, y, 10])
+    @bind test x = x
+    @bind test y = y
+    @test seval(expr, test, SymbolicCache()) == dot([seval(x,test)^2, seval(y,test), 10], [seval(x,test)^2, seval(y,test), 10])
 end
 
 @testset "SymbolicDot2" begin
@@ -136,20 +127,20 @@ end
     e1 = @expr [x^2, y, 10]
     e2 = @expr [x^2, y, 10]
     expr = dot(e1, e2)
-    x = 0.5
-    y = 0.8
-    @bind test :x => x
-    @bind test :y => y
+    x0 = 0.5
+    y0 = 0.8
+    @bind test x = x0
+    @bind test y = y0
     h = 0.0001
     test1 = SymbolicEnv()
     @bind test1 begin
-        :x => x + h
-        :y => y
+        x = x0 + h
+        y = y0
     end
     test2 = SymbolicEnv()
     @bind test2 begin
-        :x => x - h
-        :y => y
+        x = x0 - h
+        y = y0
     end
     ex = (seval(expr, test1, SymbolicCache()) - seval(expr, test2, SymbolicCache())) / (2*h)
     @test isapprox(seval(expr, :x, test, SymbolicCache()), ex, atol=1.0e-5)
@@ -160,11 +151,11 @@ end
     e1 = @expr [x^2, y, 10]
     e2 = @expr [x^2, y, 10]
     expr = dot(e1, e2)
-    x = 10.0
-    y = 0.8
+    x0 = 10.0
+    y0 = 0.8
     @bind test begin
-        :x => x
-        :y => y
+        x = x0
+        y = y0
     end
     # h = 0.00001
     # @env test1 begin
@@ -177,26 +168,26 @@ end
     # end
     # ex = (seval(expr, test1, SymbolicCache()) - 2*seval(expr, test, SymbolicCache()) + seval(expr, test2, SymbolicCache())) / (h^2)
     # @test isapprox(ex, 4*3*x^2)
-    @test isapprox(seval(expr, (:x,:x), test), 4*3*x^2)
+    @test isapprox(seval(expr, (:x,:x), test), 4*3*x0^2)
 end
 
 @testset "SymbolicMat4" begin
     m = SparseCSR(@expr [0 x 0; 0 z y])
     println(m)
-    x = 10.0
-    y = 0.8
-    z = 4
+    x0 = 10.0
+    y0 = 0.8
+    z0 = 4
     test = SymbolicEnv()
     @bind test begin
-        :x => x
-        :y => y
-        :z => z
+        x = x0
+        y = y0
+        z = z0
     end
     test2 = SymbolicEnv()
     @bind test2 begin
-        :x => 1.0
-        :y => 0.0
-        :z => 0.0
+        x = 1.0
+        y = 0.0
+        z = 0.0
     end
     result = seval(m, :x, test)
     expected = seval(m, test2)
@@ -206,20 +197,20 @@ end
 @testset "SymbolicMat5" begin
     m = SparseCSC(@expr [0 x 0; 0 z y])
     println(m)
-    x = 10.0
-    y = 0.8
-    z = 4
+    x0 = 10.0
+    y0 = 0.8
+    z0 = 4
     test = SymbolicEnv()
     @bind test begin
-        :x => x
-        :y => y
-        :z => z
+        x = x0
+        y = y0
+        z = z0
     end
     test2 = SymbolicEnv()
     @bind test2 begin
-        :x => 1.0
-        :y => 0.0
-        :z => 0.0
+        x = 1.0
+        y = 0.0
+        z = 0.0
     end
     result = seval(m, :x, test)
     expected = seval(m, test2)
@@ -229,20 +220,20 @@ end
 @testset "SymbolicMat6" begin
     m = SparseCOO(@expr [0 x 0; 0 z y])
     println(m)
-    x = 10.0
-    y = 0.8
-    z = 4
+    x0 = 10.0
+    y0 = 0.8
+    z0 = 4
     test = SymbolicEnv()
     @bind test begin
-        :x => x
-        :y => y
-        :z => z
+        x = x0
+        y = y0
+        z = z0
     end
     test2 = SymbolicEnv()
     @bind test2 begin
-        :x => 1.0
-        :y => 0.0
-        :z => 0.0
+        x = 1.0
+        y = 0.0
+        z = 0.0
     end
     result = seval(m, :x, test)
     expected = seval(m, test2)
@@ -252,20 +243,20 @@ end
 @testset "SymbolicMat7" begin
     m = sparse(@expr [0 x 0; 0 z y])
     println(m)
-    x = 10.0
-    y = 0.8
-    z = 4
+    x0 = 10.0
+    y0 = 0.8
+    z0 = 4
     test = SymbolicEnv()
     @bind test begin
-        :x => x
-        :y => y
-        :z => z
+        x = x0
+        y = y0
+        z = z0
     end
     test2 = SymbolicEnv()
     @bind test2 begin
-        :x => 1.0
-        :y => 0.0
-        :z => 0.0
+        x = 1.0
+        y = 0.0
+        z = 0.0
     end
     result = seval(m, :x, test)
     expected = seval(m, test2)
