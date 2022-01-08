@@ -21,7 +21,7 @@ SymbolicValue
 A constant value
 """
 
-struct SymbolicValue{Tv} <: AbstractSymbolic{Tv}
+mutable struct SymbolicValue{Tv} <: AbstractSymbolic{Tv}
     params::Set{Symbol}
     val::Tv
 end
@@ -34,7 +34,7 @@ SymbolicVariable
 A variable to be derivatived
 """
 
-struct SymbolicVariable{Tv} <: AbstractSymbolic{Tv}
+mutable struct SymbolicVariable{Tv} <: AbstractSymbolic{Tv}
     params::Set{Symbol}
     var::Symbol
 end
@@ -45,7 +45,7 @@ SymbolicExpr
 An expr
 """
 
-struct SymbolicExpression{Tv} <: AbstractSymbolic{Tv}
+mutable struct SymbolicExpression{Tv} <: AbstractSymbolic{Tv}
     params::Set{Symbol}
     op::Symbol
 #    args::Vector{<:AbstractSymbolic{Tv}}

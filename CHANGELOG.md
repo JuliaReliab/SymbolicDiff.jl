@@ -1,3 +1,7 @@
+# 0.9.2
+
+- change mutable struct
+
 # 0.9.1
 
 - add AbstractVectorSymbolic to return zero vector
