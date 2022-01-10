@@ -13,7 +13,19 @@ AbstractSymbolic has the filed
 
 abstract type AbstractSymbolic{Tv} end
 
+"""
+AbstractNumberSymbolic
+AbstractVectorSymbolic
+AbstractMatrixSymbolic
+AbstractGeneralSymbolic
+
+They represent the types of zero values when the derivative becomes zero
+"""
+
+abstract type AbstractNumberSymbolic{Tv} <: AbstractSymbolic{Tv} end
 abstract type AbstractVectorSymbolic{Tv} <: AbstractSymbolic{Tv} end
+abstract type AbstractMatrixSymbolic{Tv} <: AbstractSymbolic{Tv} end
+abstract type AbstractGeneralSymbolic{Tv} <: AbstractSymbolic{Tv} end
 
 """
 SymbolicValue
@@ -21,7 +33,7 @@ SymbolicValue
 A constant value
 """
 
-mutable struct SymbolicValue{Tv} <: AbstractSymbolic{Tv}
+mutable struct SymbolicValue{Tv} <: AbstractNumberSymbolic{Tv}
     params::Set{Symbol}
     val::Tv
 end
@@ -34,7 +46,7 @@ SymbolicVariable
 A variable to be derivatived
 """
 
-mutable struct SymbolicVariable{Tv} <: AbstractSymbolic{Tv}
+mutable struct SymbolicVariable{Tv} <: AbstractNumberSymbolic{Tv}
     params::Set{Symbol}
     var::Symbol
 end
@@ -45,51 +57,50 @@ SymbolicExpr
 An expr
 """
 
-mutable struct SymbolicExpression{Tv} <: AbstractSymbolic{Tv}
+mutable struct SymbolicExpression{Tv} <: AbstractNumberSymbolic{Tv}
     params::Set{Symbol}
     op::Symbol
-#    args::Vector{<:AbstractSymbolic{Tv}}
-    args
+    args::Vector{<:AbstractSymbolic{Tv}}
+    others
 end
 
 """
 convert
 """
 
-function Base.convert(::Type{<:AbstractSymbolic{T}}, x::SymbolicVariable{S}) where {T<:Number,S<:Number}
+function Base.convert(::Type{<:AbstractNumberSymbolic{T}}, x::SymbolicVariable{S}) where {T<:Number,S<:Number}
     symbolic(x.var, T)
 end
 
-function Base.convert(::Type{<:AbstractSymbolic{T}}, x::SymbolicValue{S}) where {T<:Number,S<:Number}
+function Base.convert(::Type{<:AbstractNumberSymbolic{T}}, x::SymbolicValue{S}) where {T<:Number,S<:Number}
     symbolic(T(x.val), T)
 end
 
-function Base.convert(::Type{<:AbstractSymbolic{T}}, x::S) where {T<:Number,S<:Number}
+function Base.convert(::Type{<:AbstractNumberSymbolic{T}}, x::S) where {T<:Number,S<:Number}
     symbolic(T(x), T)
 end
 
-function Base.convert(::Type{<:AbstractSymbolic{T}}, x::SymbolicExpression{S}) where {T<:Number,S<:Number}
-    SymbolicExpression{T}(x.params, x.op, [convert(AbstractSymbolic{T}, u) for u = x.args]) 
+function Base.convert(::Type{<:AbstractNumberSymbolic{T}}, x::SymbolicExpression{S}) where {T<:Number,S<:Number}
+    SymbolicExpression{T}(x.params, x.op, [convert(AbstractNumberSymbolic{T}, u) for u = x.args], []) 
 end
-
 
 """
 promotion
 """
 
-function Base.promote_rule(::Type{<:AbstractSymbolic{T}}, ::Type{S}) where {T<:Number,S<:Number}
-    AbstractSymbolic{promote_type(T,S)}
+function Base.promote_rule(::Type{<:AbstractNumberSymbolic{T}}, ::Type{S}) where {T<:Number,S<:Number}
+    AbstractNumberSymbolic{promote_type(T,S)}
 end
 
-function Base.promote_rule(::Type{<:AbstractSymbolic{T}}, ::Type{<:AbstractSymbolic{S}}) where {T<:Number,S<:Number}
-    AbstractSymbolic{promote_type(T,S)}
+function Base.promote_rule(::Type{<:AbstractNumberSymbolic{T}}, ::Type{<:AbstractNumberSymbolic{S}}) where {T<:Number,S<:Number}
+    AbstractNumberSymbolic{promote_type(T,S)}
 end
 
 """
 iszero
 """
 
-function Base.iszero(x::AbstractSymbolic{Tv}) where Tv
+function Base.iszero(x::AbstractNumberSymbolic{Tv}) where Tv
     false
 end
 
@@ -97,7 +108,7 @@ function Base.iszero(x::SymbolicValue{Tv}) where Tv
     Base.iszero(x.val)
 end
 
-function Base.zero(::Type{AbstractSymbolic{Tv}}) where Tv
+function Base.zero(::Type{AbstractNumberSymbolic{Tv}}) where Tv
     SymbolicValue(Tv(0))
 end
 
@@ -105,7 +116,7 @@ end
 IO for structures
 """
 
-function Base.show(io::IO, x::AbstractSymbolic)
+function Base.show(io::IO, x::AbstractNumberSymbolic)
     expr = _toexpr(x)
     Base.show(io, expr)
 end

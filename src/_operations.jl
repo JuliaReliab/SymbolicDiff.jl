@@ -2,51 +2,78 @@
 operations
 """
 
-function Base.:+(x::AbstractSymbolic{Tv}) where Tv
-    SymbolicExpression{Tv}(x.params, :+, [x])
+function Base.:+(x::AbstractNumberSymbolic{Tv}) where Tv
+    SymbolicExpression{Tv}(x.params, :+, [x], [])
 end
 
-function Base.:-(x::AbstractSymbolic{Tv}) where Tv
-    SymbolicExpression{Tv}(x.params, :-, [x])
+function Base.:-(x::AbstractNumberSymbolic{Tv}) where Tv
+    SymbolicExpression{Tv}(x.params, :-, [x], [])
 end
 
 for op in [:+, :-, :*, :/, :^]
-    @eval function Base.$op(x::AbstractSymbolic{Tx}, y::AbstractSymbolic{Ty}) where {Tx<:Number,Ty<:Number}
+    @eval function Base.$op(x::AbstractNumberSymbolic{Tx}, y::AbstractNumberSymbolic{Ty}) where {Tx<:Number,Ty<:Number}
         s = union(x.params, y.params)
         Tv = promote_type(Tx,Ty)
-        SymbolicExpression{promote_type(Tx,Ty)}(s, $(Expr(:quote, op)), [x, y])
+        SymbolicExpression{promote_type(Tx,Ty)}(s, $(Expr(:quote, op)), [x, y], [])
     end
 
-    @eval function Base.$op(x::Tx, y::AbstractSymbolic{Ty}) where {Tx<:Number,Ty<:Number}
+    @eval function Base.$op(x::Tx, y::AbstractNumberSymbolic{Ty}) where {Tx<:Number,Ty<:Number}
         Tv = promote_type(Tx,Ty)
-        SymbolicExpression{promote_type(Tx,Ty)}(y.params, $(Expr(:quote, op)), [x, y])
+        SymbolicExpression{promote_type(Tx,Ty)}(y.params, $(Expr(:quote, op)), [x, y], [])
     end
 
-    @eval function Base.$op(x::AbstractSymbolic{Tx}, y::Ty) where {Tx<:Number,Ty<:Number}
+    @eval function Base.$op(x::AbstractNumberSymbolic{Tx}, y::Ty) where {Tx<:Number,Ty<:Number}
         Tv = promote_type(Tx,Ty)
-        SymbolicExpression{promote_type(Tx,Ty)}(x.params, $(Expr(:quote, op)), [x, y])
+        SymbolicExpression{promote_type(Tx,Ty)}(x.params, $(Expr(:quote, op)), [x, y], [])
     end
 end
 
-function Base.exp(x::AbstractSymbolic{Tv}) where Tv
-    SymbolicExpression{Tv}(x.params, :exp, [x])
+function Base.exp(x::AbstractNumberSymbolic{Tv}) where Tv
+    SymbolicExpression{Tv}(x.params, :exp, [x], [])
 end
 
-function Base.log(x::AbstractSymbolic{Tv}) where Tv
-    SymbolicExpression{Tv}(x.params, :log, [x])
+function Base.log(x::AbstractNumberSymbolic{Tv}) where Tv
+    SymbolicExpression{Tv}(x.params, :log, [x], [])
 end
 
-function Base.sqrt(x::AbstractSymbolic{Tv}) where Tv
-    SymbolicExpression{Tv}(x.params, :sqrt, [x])
+function Base.sqrt(x::AbstractNumberSymbolic{Tv}) where Tv
+    SymbolicExpression{Tv}(x.params, :sqrt, [x], [])
 end
 
-function sum(x::Vector{<:AbstractSymbolic{T}}) where {T<:Number}
-    s = union([u.params for u = x]...)
-    SymbolicExpression{Tv}(s, :sum, [x])
+###
+
+function Base.sum(x::Vector{<:AbstractNumberSymbolic{T}}) where {T<:Number}
+    sum(convert(AbstractVectorSymbolic{T}, x))
 end
 
-function dot(x::Vector{<:AbstractSymbolic{Tx}}, y::Vector{<:AbstractSymbolic{Ty}}) where {Tx<:Number,Ty<:Number}
+function Base.sum(x::AbstractVectorSymbolic{T}) where {T<:Number}
+    SymbolicExpression{T}(x.params, :sum, [x], [])
+end
+
+function dot(x::Vector{<:AbstractNumberSymbolic{Tx}}, y::Vector{<:AbstractNumberSymbolic{Ty}}) where {Tx<:Number,Ty<:Number}
+    dot(convert(AbstractVectorSymbolic{Tx}, x), convert(AbstractVectorSymbolic{Ty}, y))
+end
+
+function dot(x::AbstractVectorSymbolic{Tx}, y::AbstractVectorSymbolic{Ty}) where {Tx<:Number,Ty<:Number}
     Tv = promote_type(Tx,Ty)
-    s = union([u.params for u = x]..., [u.params for u = y]...)
-    SymbolicExpression{Tv}(s, :dot, [x, y])
+    s = union(x.params, y.params)
+    SymbolicExpression{Tv}(s, :dot, AbstractVectorSymbolic{Tv}[x, y], [])
+end
+
+for op in [:+, :-]
+    @eval function Base.$op(x::AbstractVectorSymbolic{Tx}, y::AbstractVectorSymbolic{Ty}) where {Tx<:Number,Ty<:Number}
+        s = union(x.params, y.params)
+        Tv = promote_type(Tx,Ty)
+        SymbolicVectorExpression{promote_type(Tx,Ty)}(s, $(Expr(:quote, op)), [x, y], x.dim, [])
+    end
+
+    @eval function Base.$op(x::Tx, y::AbstractVectorSymbolic{Ty}) where {Tx<:Number,Ty<:Number}
+        Tv = promote_type(Tx,Ty)
+        SymbolicVectorExpression{promote_type(Tx,Ty)}(y.params, $(Expr(:quote, op)), [x, y], x.dim, [])
+    end
+
+    @eval function Base.$op(x::AbstractVectorSymbolic{Tx}, y::Ty) where {Tx<:Number,Ty<:Number}
+        Tv = promote_type(Tx,Ty)
+        SymbolicVectorExpression{promote_type(Tx,Ty)}(x.params, $(Expr(:quote, op)), [x, y], x.dim, [])
+    end
 end

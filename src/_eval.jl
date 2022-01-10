@@ -27,7 +27,7 @@ function seval(f::SymbolicVariable{Tv}, env::SymbolicEnv, cache::SymbolicCache):
     env[f.var]
 end
 
-function seval(f::AbstractSymbolic{Tv}, env::SymbolicEnv, cache::SymbolicCache) where Tv
+function seval(f::AbstractNumberSymbolic{Tv}, env::SymbolicEnv, cache::SymbolicCache)::Tv where Tv
     get(cache, f) do
         retval = _eval(Val(f.op), f, env, cache)
         cache[f] = retval

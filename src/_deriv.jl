@@ -47,16 +47,8 @@ function seval(f::SymbolicVariable{Tv}, dvar::Symbol, env::SymbolicEnv, cache::S
     f.var == dvar ? 1 : 0
 end
 
-function seval(f::AbstractSymbolic{Tv}, dvar::Symbol, env::SymbolicEnv, cache::SymbolicCache) where Tv
+function seval(f::AbstractNumberSymbolic{Tv}, dvar::Symbol, env::SymbolicEnv, cache::SymbolicCache)::Tv where Tv
     (dvar in f.params) || return 0
-    get(cache, (f,dvar)) do
-        retval = _eval(Val(f.op), f, dvar, env, cache)
-        cache[(f,dvar)] = retval
-    end
-end
-
-function seval(f::AbstractVectorSymbolic{Tv}, dvar::Symbol, env::SymbolicEnv, cache::SymbolicCache) where Tv
-    (dvar in f.params) || return zeros(Tv, f.dim)
     get(cache, (f,dvar)) do
         retval = _eval(Val(f.op), f, dvar, env, cache)
         cache[(f,dvar)] = retval
