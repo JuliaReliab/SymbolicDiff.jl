@@ -1,3 +1,13 @@
+@testset "SymbolicCSC0" begin
+    Q = @expr [-x x 0;
+            1 -2 1;
+            0 1 -1]
+    csc = SparseCSC(Q)
+    y = convert(AbstractMatrixSymbolic{Float64}, csc)
+    println(typeof(y))
+    convert(AbstractMatrixSymbolic{Float64}, y)
+end
+
 @testset "SymbolicCSR1" begin
     @bind x = 10
     v = [x^i + i for i = 1:9]

@@ -46,7 +46,7 @@ end
 
 function Base.convert(::Type{<:AbstractSymbolic{T}}, s::SymbolicMatrix{S,SparseMatrixCSC,Ti}) where {T<:Number,S<:Number,Ti}
     f = s.mat
-    v = SparseMatrixCSC{T,Ti}(f.m, f.n, f.colptr, f.rowval, [convert(AbstractNumberSymbolic{T}, x) for x = f.nzval])
+    v = SparseMatrixCSC(f.m, f.n, f.colptr, f.rowval, [convert(AbstractNumberSymbolic{T}, x) for x = f.nzval])
     SymbolicMatrix{T,SparseMatrixCSC,Ti}(s.params, v, size(v))
 end
 
@@ -61,24 +61,19 @@ end
 
 function Base.convert(::Type{<:AbstractSymbolic{T}}, s::SymbolicMatrix{S,SparseCSR,Ti}) where {T<:Number,S<:Number,Ti}
     f = s.mat
-    v = SparseCSR{T,Ti}(f.m, f.n, [convert(AbstractNumberSymbolic{T}, x) for x = f.val], f.rowptr, f.colind)
+    v = SparseCSR(f.m, f.n, [convert(AbstractNumberSymbolic{T}, x) for x = f.val], f.rowptr, f.colind)
     SymbolicMatrix{T,SparseCSR,Ti}(s.params, v, size(v))
 end
 
 function Base.convert(::Type{<:AbstractSymbolic{T}}, s::SymbolicMatrix{S,SparseCSC,Ti}) where {T<:Number,S<:Number,Ti}
-    println("OKOK5")
     f = s.mat
-    println("OKOK6")
-    v = SparseCSC{T,Ti}(f.m, f.n, [convert(AbstractNumberSymbolic{T}, x) for x = f.val], f.colptr, f.rowind)
-    println("OKOK7")
-    r = SymbolicMatrix{T,SparseCSC,Ti}(s.params, v, size(v))
-    println("OKOK8")
-    r
+    v = SparseCSC(f.m, f.n, [convert(AbstractNumberSymbolic{T}, x) for x = f.val], f.colptr, f.rowind)
+    SymbolicMatrix{T,SparseCSC,Ti}(s.params, v, size(v))
 end
 
 function Base.convert(::Type{<:AbstractSymbolic{T}}, s::SymbolicMatrix{S,SparseCOO,Ti}) where {T<:Number,S<:Number,Ti}
     f = s.mat
-    v = SparseCOO{T,Ti}(f.m, f.n, [convert(AbstractNumberSymbolic{T}, x) for x = f.val], f.rowind, f.colind)
+    v = SparseCOO(f.m, f.n, [convert(AbstractNumberSymbolic{T}, x) for x = f.val], f.rowind, f.colind)
     SymbolicMatrix{T,SparseCOO,Ti}(s.params, v, size(v))
 end
 
