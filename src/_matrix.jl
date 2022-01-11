@@ -68,7 +68,7 @@ end
 function Base.convert(::Type{<:AbstractSymbolic{T}}, s::SymbolicMatrix{S,SparseCSC,Ti}) where {T<:Number,S<:Number,Ti}
     f = s.mat
     v = SparseCSC{T,Ti}(f.m, f.n, [convert(AbstractNumberSymbolic{T}, x) for x = f.val], f.colptr, f.rowind)
-    SymbolicMatrix{T,SparseCSR,Ti}(s.params, v, size(v))
+    SymbolicMatrix{T,SparseCSC,Ti}(s.params, v, size(v))
 end
 
 function Base.convert(::Type{<:AbstractSymbolic{T}}, s::SymbolicMatrix{S,SparseCOO,Ti}) where {T<:Number,S<:Number,Ti}
