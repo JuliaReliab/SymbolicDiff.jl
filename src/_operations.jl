@@ -54,6 +54,14 @@ function dot(x::Vector{<:AbstractNumberSymbolic{Tx}}, y::Vector{<:AbstractNumber
     dot(convert(AbstractVectorSymbolic{Tx}, x), convert(AbstractVectorSymbolic{Ty}, y))
 end
 
+function dot(x::AbstractVectorSymbolic{Tx}, y::Vector{<:AbstractNumberSymbolic{Ty}}) where {Tx<:Number,Ty<:Number}
+    dot(x, convert(AbstractVectorSymbolic{Ty}, y))
+end
+
+function dot(x::Vector{<:AbstractNumberSymbolic{Tx}}, y::AbstractVectorSymbolic{Ty}) where {Tx<:Number,Ty<:Number}
+    dot(convert(AbstractVectorSymbolic{Tx}, x), y)
+end
+
 function dot(x::AbstractVectorSymbolic{Tx}, y::AbstractVectorSymbolic{Ty}) where {Tx<:Number,Ty<:Number}
     Tv = promote_type(Tx,Ty)
     s = union(x.params, y.params)
