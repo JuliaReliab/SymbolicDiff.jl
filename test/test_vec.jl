@@ -151,3 +151,20 @@ end
     println(seval(dot(v1, v2), :y))
     println(seval(dot(v1, v2), (:x,:y)))
 end
+
+@testset "SymbolicPlus2" begin
+    test = SymbolicEnv()
+    e1 = convert(AbstractVectorSymbolic{Float64}, @expr [x^2, y, 10])
+    e2 = convert(AbstractVectorSymbolic{Float64}, @expr [x, y^2, 10])
+    expr = e1 + e2
+    println(expr)
+    x0 = 10.0
+    y0 = 0.8
+    @bind test begin
+        x = x0
+        y = y0
+    end
+    println(seval(expr, test))
+    println(seval(expr[1], test))
+    println(seval(expr[[true, false, false]], test))
+end

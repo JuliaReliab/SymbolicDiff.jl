@@ -75,11 +75,11 @@ function Base.getindex(x::SymbolicVector{T}, i::Any) where {T<:Number}
     SymbolicVector{T}(s, v, length(v))
 end
 
-function Base.getindex(x::SymbolicVectorExpression{T}, i::Number) where {T<:Number}
+function Base.getindex(x::AbstractVectorSymbolic{T}, i::Number) where {T<:Number}
     SymbolicExpression{T}(x.params, :getindex, [x], [i])
 end
 
-function Base.getindex(x::SymbolicVectorExpression{T}, i::Any) where {T<:Number}
+function Base.getindex(x::AbstractVectorSymbolic{T}, i::Any) where {T<:Number}
     SymbolicVectorExpression{T}(x.params, :getindex, [x], length(i), [i])
 end
 
