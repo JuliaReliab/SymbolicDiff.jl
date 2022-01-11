@@ -66,6 +66,7 @@ function Base.convert(::Type{<:AbstractSymbolic{T}}, s::SymbolicMatrix{S,SparseC
 end
 
 function Base.convert(::Type{<:AbstractSymbolic{T}}, s::SymbolicMatrix{S,SparseCSC,Ti}) where {T<:Number,S<:Number,Ti}
+    println("OKOK5")
     f = s.mat
     v = SparseCSC{T,Ti}(f.m, f.n, [convert(AbstractNumberSymbolic{T}, x) for x = f.val], f.colptr, f.rowind)
     SymbolicMatrix{T,SparseCSC,Ti}(s.params, v, size(v))
