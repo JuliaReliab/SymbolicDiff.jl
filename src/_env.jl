@@ -6,3 +6,6 @@ const SymbolicEnv = Dict{Symbol,Any}
 const SymbolicCache = Dict{Union{AbstractSymbolic,Tuple{AbstractSymbolic,Symbol},Tuple{AbstractSymbolic,Tuple{Symbol,Symbol}}},Any}
 const globalenv = SymbolicEnv()
 
+function Base.setindex!(h::SymbolicEnv, k::SymbolicVariable{Tv}, x) where Tv
+    h[h.var] = x
+end
