@@ -81,7 +81,11 @@ function Base.convert(::Type{<:AbstractNumberSymbolic{T}}, x::S) where {T<:Numbe
 end
 
 function Base.convert(::Type{<:AbstractNumberSymbolic{T}}, x::SymbolicExpression{S}) where {T<:Number,S<:Number}
-    SymbolicExpression{T}(x.params, x.op, [convert(AbstractNumberSymbolic{T}, u) for u = x.args], []) 
+    if T != S
+        SymbolicExpression{T}(x.params, x.op, [convert(AbstractNumberSymbolic{T}, u) for u = x.args], [])
+    else
+        x
+    end
 end
 
 """
