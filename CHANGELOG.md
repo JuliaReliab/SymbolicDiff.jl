@@ -1,3 +1,7 @@
+# 0.9.3
+
+- refactor: add AbstractVectorSymbolic etc.
+
 # 0.9.2
 
 - change mutable struct
