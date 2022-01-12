@@ -7,5 +7,5 @@ const SymbolicCache = Dict{Union{AbstractSymbolic,Tuple{AbstractSymbolic,Symbol}
 const globalenv = SymbolicEnv()
 
 function Base.setindex!(h::SymbolicEnv, x::Any, k::SymbolicVariable{Tv}) where Tv
-    h[h.var] = x
+    h[k.var] = x
 end
