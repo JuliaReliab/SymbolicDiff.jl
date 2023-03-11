@@ -80,7 +80,7 @@ mutable struct SymbolicValue{T} <: AbstractSymbolicValue{T}
     params::Set{AbstractSymbolic}
     data::T
 
-    function SymbolicValue{T}(data::T) where T
+    function SymbolicValue(data::T) where T
         x = new{T}()
         x.data = data
         x.params = Set{AbstractSymbolic}([x])
@@ -89,7 +89,7 @@ mutable struct SymbolicValue{T} <: AbstractSymbolicValue{T}
 end
 
 function val(x::T) where T
-    SymbolicValue{T}(x)
+    SymbolicValue(x)
 end
 
 # function creator!(x::AbstractSymbolicValue, f::AbstractSymbolic)
@@ -356,7 +356,7 @@ function Base.convert(::Type{<:AbstractSymbolic{T}}, x::AbstractSymbolicVariable
 end
 
 function Base.convert(::Type{<:AbstractSymbolic{T}}, x::AbstractSymbolicValue{S}) where {T,S}
-    SymbolicValue{T}(T(x.data))
+    SymbolicValue(T(x.data))
 end
 
 function Base.convert(::Type{<:AbstractSymbolic{T}}, x::AbstractSymbolicExpression{S}) where {T,S}
@@ -364,7 +364,7 @@ function Base.convert(::Type{<:AbstractSymbolic{T}}, x::AbstractSymbolicExpressi
 end
 
 function Base.convert(::Type{<:AbstractSymbolic{T}}, x::S) where {T<:Number,S<:Number}
-    SymbolicValue{T}(T(x))
+    SymbolicValue(T(x))
 end
 
 """
