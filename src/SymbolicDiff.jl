@@ -1,5 +1,6 @@
 module SymbolicDiff
 
+include("_tsort.jl")
 include("_parameter.jl")
 
 # export AbstractSymbolic, AbstractVectorSymbolic, AbstractMatrixSymbolic, SymbolicVariable, SymbolicValue, SymbolicExpression
